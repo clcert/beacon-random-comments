@@ -17,10 +17,7 @@
   "browser_action": {
     "default_icon": "icons/dice-64.png",
     "default_title": "Instagram Random Comments",
-    "default_popup": "popup/choose_comments.html"
-  },
-
-  "web_accessible_resources": [
-  ]
+    "default_popup": "popup/choose_comment.html"
+  }
 
 }

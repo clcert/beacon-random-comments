@@ -1,0 +1,42 @@
+
+.hidden {
+	display: none;
+}
+
+html, body {
+	width: 360px;
+	padding: 0;
+	margin: 0;
+}
+
+h1 {
+	color: rgb(220, 220, 220);
+	font-size: 1em;
+	margin: 0;
+	text-decoration: none;
+}
+
+td {
+	vertical-align: top;
+}
+
+header {
+	font-family: arial;
+	text-align: center;
+	background: rgb(80, 80, 80);
+	color: white;
+}
+
+
+.choose {
+	float: right;
+	margin-left: auto;
+}
+
+.state-title {
+	width: 45%;
+}
+
+.state-message {
+	width: 55%;
+}
