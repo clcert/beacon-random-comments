@@ -2,7 +2,7 @@
 function listenForClicks() {
 	document.querySelector("#chooser").addEventListener("click", (e) => {
 
-		function chooseComment() {
+		function chooseComment(tabs) {
 			browser.tabs.sendMessage(tabs[0].id, {
 				command: 'choose'
 			});
