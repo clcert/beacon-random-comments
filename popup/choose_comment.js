@@ -24,6 +24,17 @@ function reportExecuteScriptError(error) {
 	console.error(`Failed to execute beastify content script: ${error.message}`);
 }
 
+
+/**
+ * Given a string representing an url, gets its JSON content
+*/
+function jsonFromUrl(url){
+    var request = new XMLHttpRequest(); // a new request
+    request.open("GET", url, false);
+    request.send(null);
+    return JSON.parse(request.responseText);          
+}
+
 browser.tabs.executeScript({file: "/content_scripts/instagram_random_comments.js"})
 	.then(listenForClicks)
 	.catch(reportExecuteScriptError);

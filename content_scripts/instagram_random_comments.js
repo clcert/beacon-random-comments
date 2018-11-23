@@ -10,13 +10,11 @@
 	var intervalClickerId;
 	let commentsList = [];
 
-	// Auxiliary functions
-
 	/**
 	 * Extracts the comment of the given index from the Instagram
 	 * post HTML
 	*/
-	const commentGetter = (index) => {
+	function commentGetter(index) {
 		const fixedIndex = index + 2;
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(" + fixedIndex.toString() + ")";
 		const stringComment = document.querySelector(base + "> div > div > div > span").innerHTML;
@@ -28,7 +26,7 @@
 	 * Clicks if the button to "Load more comments" still exists in
 	 * the Instagram Post, else save the comments in the commentsList
 	*/
-	const clicker = () => {
+	function clicker() {
 		try {
 			document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
 		} catch (err) {
@@ -50,11 +48,14 @@
 		}
 	};	
 
+
+	/**
+ 	 * Makes the request to load the comments and choose randomly
+ 	 * using the beacon output
+	*/
 	browser.runtime.onMessage.addListener((message) => {
 		console.log(message);
 		if (message.command === "choose") {
-			console.log("Starting comments loading...");
-
 			const  timeInterval = 500;
 			intervalClickerId = window.setInterval(clicker, timeInterval);
 			
