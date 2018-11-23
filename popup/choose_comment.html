@@ -6,24 +6,16 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="choose_comment.css"/>
 </head>
-<body class="no-padding">
+<body>
 	<header>
 		<h1>Instagram Random Comments</h1>
 	</header>
 	<div id="popup-content">
-		<table>
-			<tr>
-				<td class="state-title">Inicializar Sorteo:</td>
-				<td "state-message"><button id="chooser">Sortear</button>
-			</tr>
-			<tr>
-				<td class="state-title">Estado:</td>
-				<td class="state-message">Debes estar en un post de Instagram para poder sortear</td>
-			</tr>
-		</table>
+		<div class="state">Inicializar Sorteo:</div>
+		<div id="chooser" class="button chooser">Sortear</div>
 	</div>
 	<div id="error-content" class="hidden">
-		<p>Can load plugin</p>
+		<p>Can't load plugin</p>
 	</div>
 
 	<script src="choose_comment.js"></script>
