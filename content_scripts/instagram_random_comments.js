@@ -5,9 +5,8 @@
 
 	window.hasRun = true;
 
-	console.log("received message");
-
 	var intervalClickerId;
+	let loadingGifUrl;
 	let commentsList = [];
 
 	/**
@@ -22,6 +21,37 @@
 		return {author: stringAuthor, comment: stringComment};
 	}
 
+
+	function insertLoadingGif(node) {
+		let loadingIcon = document.createElement("img");
+		loadingIcon.setAttribute("src", loadingGifUrl);
+		loadingIcon.className = "loading-gif";
+		node.parentNode.insertBefore(loadingIcon, node.nextSibling);
+	}
+
+	function removeLoadingGif(node) {
+		node.nextSibling.style.display = "None";
+	}
+
+	function toggleComentsLoading() {
+		if (!window.displayState) {
+ 			window.displayState = "block";
+		}
+
+		let comments =  document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
+		if (window.displayState === "block") {
+			comments.style.display = "none";
+			window.displayState = "none";
+			insertLoadingGif(comments);
+			
+		} else {
+			comments.style.display = "block";
+			window.displayState = "block";
+			removeLoadingGif(comments);
+		}
+	}	
+
+
 	/**
 	 * Clicks if the button to "Load more comments" still exists in
 	 * the Instagram Post, else save the comments in the commentsList
@@ -29,9 +59,15 @@
 	function clicker() {
 		try {
 			document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
+			if (!window.isLoading) {
+				toggleComentsLoading();
+				window.isLoading = true;
+			}
 		} catch (err) {
 			console.log("Finished comments loading");
 			clearInterval(intervalClickerId);
+			toggleComentsLoading();
+
 			console.log("Starting saving comments...");
 
 			let i = 0;
@@ -57,8 +93,8 @@
 		console.log(message);
 		if (message.command === "choose") {
 			const  timeInterval = 500;
+			loadingGifUrl = message.loadingUrl;
 			intervalClickerId = window.setInterval(clicker, timeInterval);
-			
 			console.log(commentsList);
 		}
 	});

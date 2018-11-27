@@ -28,13 +28,6 @@ header {
 }
 
 
-.state {
-	display: inline;
-	margin-top: 10px;
-	padding-top: 4px;
-	width: 50%;
-}
-
 .button {
 	margin: 4px;
 	padding: 4px;
@@ -43,9 +36,8 @@ header {
 }
 
 .chooser {
-	float: right;
-	display: inline;
-	width: 39%;
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 .chooser {

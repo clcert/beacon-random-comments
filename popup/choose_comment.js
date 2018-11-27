@@ -1,10 +1,15 @@
 
+
 function listenForClicks() {
 	document.querySelector("#chooser").addEventListener("click", (e) => {
 
-		function chooseComment(tabs) {
+		function loadComments(tabs) {
+			let url = browser.extension.getURL("gif/loading.gif");
 			browser.tabs.sendMessage(tabs[0].id, {
-				command: 'choose'
+				command: "choose",
+				loadingUrl: url
+			}).then(response => {
+				document.querySelector("#chooser").innerHTML = "Sortear";
 			});
 		}
 
@@ -13,7 +18,7 @@ function listenForClicks() {
 		}
 
 		browser.tabs.query({active: true, currentWindow: true})
-			.then(chooseComment)
+			.then(loadComments)
 			.catch(reportError);
 	});
 }
