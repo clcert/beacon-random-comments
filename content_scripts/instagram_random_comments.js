@@ -29,9 +29,11 @@
 		node.parentNode.insertBefore(loadingIcon, node.nextSibling);
 	}
 
+
 	function removeLoadingGif(node) {
 		node.nextSibling.style.display = "None";
 	}
+
 
 	function toggleComentsLoading() {
 		if (!window.displayState) {
@@ -52,6 +54,14 @@
 	}	
 
 
+
+	function notifyLoad() {
+		browser.runtime.sendMessage({
+			isLoaded: true
+		});	
+		console.log("sent message");
+	}
+
 	/**
 	 * Clicks if the button to "Load more comments" still exists in
 	 * the Instagram Post, else save the comments in the commentsList
@@ -68,19 +78,7 @@
 			clearInterval(intervalClickerId);
 			toggleComentsLoading();
 
-			console.log("Starting saving comments...");
-
-			let i = 0;
-			while (true) {
-				try {
-					const comment = commentGetter(i);
-					commentsList.push(comment);
-					i++;
-				} catch (err) {
-					break;
-				}
-			}
-			console.log("Finished saving comments");
+			notifyLoad();
 		}
 	};	
 

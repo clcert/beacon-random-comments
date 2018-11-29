@@ -1,16 +1,28 @@
 
 
+function doNothing() {
+	console.log("doing nothing");
+}
+
 function listenForClicks() {
 	document.querySelector("#chooser").addEventListener("click", (e) => {
 
+		/**
+		 * Sends the message to start loading comments. Once the message is sent
+		 * disables the extension button.
+		 */
 		function loadComments(tabs) {
 			let url = browser.extension.getURL("gif/loading.gif");
 			browser.tabs.sendMessage(tabs[0].id, {
 				command: "choose",
 				loadingUrl: url
-			}).then(response => {
-				document.querySelector("#chooser").innerHTML = "Sortear";
 			});
+
+			let chooser = document.querySelector("#chooser");
+			chooser.removeEventListener("click", listenForClicks);
+			chooser.addEventListener("click", doNothing);
+			chooser.classList.remove("chooser");
+			chooser.classList.add("chooser-blocked");
 		}
 
 		function reportError(error) {
@@ -40,6 +52,23 @@ function jsonFromUrl(url){
     return JSON.parse(request.responseText);          
 }
 
+
+function listenForLoading() {
+	function handleLoading() {
+		let chooser = document.querySelector("#chooser");
+		chooser.innerHTML = "Sortear";
+		chooser.classList.remove("chooser-blocked");
+		chooser.classList.add("chooser");	
+	}	
+
+	browser.runtime.onMessage.addListener(handleLoading);
+}
+
+
+
 browser.tabs.executeScript({file: "/content_scripts/instagram_random_comments.js"})
 	.then(listenForClicks)
+	.then(listenForLoading)
 	.catch(reportExecuteScriptError);
+
+

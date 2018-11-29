@@ -35,12 +35,12 @@ header {
     cursor: pointer;
 }
 
-.chooser {
+.chooser, .chooser-blocked {
 	margin-top: 1em;
 	margin-bottom: 1em;
 }
 
-.chooser {
+.chooser, .chooser-blocked {
   background-color: #E5F2F2;
 }
 
