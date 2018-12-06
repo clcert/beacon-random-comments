@@ -16,6 +16,16 @@
     "storage"
   ],
 
+  "content_scripts": [
+    {
+      "matches": ["https://www.instagram.com/p/*"],
+      "js": [
+        "content_scripts/seedrandom.min.js",
+        "content_scripts/instagram_random_comments.js"
+       ]
+    }
+  ],
+
   "browser_action": {
     "default_icon": "icons/dice-64.png",
     "default_title": "Instagram Random Comments",

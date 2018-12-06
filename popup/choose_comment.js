@@ -1,6 +1,5 @@
 
 
-let totalComments;
 
 /**
  * General report execute error function
@@ -54,7 +53,6 @@ function listenForLoaded() {
 
 
 	function handleLoaded(message) {
-		totalComments = message.totalComments;
 		listenClickToChoose();
 	}	
 
@@ -63,28 +61,20 @@ function listenForLoaded() {
 }
 
 
-/**
- * Choose Function's section
- */
-function randInt(min, max) {
-	return Math.floor(Math.random()*(max-min+1)+min);
-}
+
 
 function listenClickToChoose() {
 	let chooser = document.querySelector("#chooser");
-	if (chooser.innerHTML !== "Sortear") {
-		chooser.innerHTML = "Sortear";
-		chooser.classList.remove("chooser-blocked");
-		chooser.classList.add("chooser");
-	}
+			
+	chooser.classList.remove("chooser-blocked");
+	chooser.classList.add("chooser");
+
 
 	function sendChoosenMessage(e) {
 
 		function chooseComment(tabs) {
-			const commentId = randInt(0, totalComments);
 			browser.tabs.sendMessage(tabs[0].id, {
-				command: "choose",
-				comment: commentId
+				command: "choose"
 			});
 		}
 
@@ -92,7 +82,8 @@ function listenClickToChoose() {
 			.then(chooseComment);
 	} 
 
-	document.querySelector("#chooser").addEventListener("click", sendChoosenMessage);	
+	document.querySelector("#chooser").addEventListener("click", sendChoosenMessage);
+	document.querySelector("#chooser").click();	
 }
 
 
@@ -106,7 +97,6 @@ function listenForState() {
 		if (message.state === "unloaded") {
 			listenClickToLoad();
 		} else if (message.state === "loaded") {
-			totalComments = message.totalComments;
 			listenClickToChoose();
 		}
 	}
@@ -120,9 +110,8 @@ function askForState() {
 	}
 
 	function sendMessage(tabs)  {
-		const commentId = randInt(0, totalComments-1);
 		browser.tabs.sendMessage(tabs[0].id, {
-			command: "state",
+			command: "state"
 		});
 	}
 	
@@ -133,7 +122,7 @@ function askForState() {
 			.catch(reportError);
 }
 
-browser.tabs.executeScript({file: "/content_scripts/instagram_random_comments.js"})
+browser.tabs.query({active: true, currentWindow: true})
 	.then(askForState)
 	.catch(reportExecuteScriptError);
 
