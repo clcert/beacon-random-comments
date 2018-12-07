@@ -10,17 +10,7 @@
 	let loadingGifUrl;
 	let totalComments = 0;
 	let pulse; 
-
-	Math.seedrandom('hello.');
-
 	
-	function jsonFromUrl(url) {
-		let request = new XMLHttpRequest();
-		request.open("GET", url, false);
-		request.send(null);
-		return JSON.parse(request.responseText);
-	}
-
 
 	/**
 	 * Extracts the comment of the given index from the Instagram
@@ -60,7 +50,6 @@
 			comments.nextSibling.style.display = "none";
 
 			window.displayState = "block";	
-			window.popupState = "loaded";
 		}
 	}
 
@@ -82,9 +71,6 @@
 		} catch (err) {
 			clearInterval(intervalClickerId);
 
-			
-			hideCommentsLoadingIcon();
-
 			while (true) {
 				try {
 					commentGetter(totalComments);
@@ -93,8 +79,13 @@
 					break;
 				}
 			}
-			console.log(totalComments);
-			notifyLoad();
+
+			if (window.seed) {
+				hideCommentsLoadingIcon();	
+				notifyLoad();
+				displayComment(randInt(1, totalComments));
+			}
+			window.popupState = "loaded";
 		}
 	};	
 
@@ -133,21 +124,29 @@
 		if (message.command === "load") {
 			const  timeInterval = 500;
 			loadingGifUrl = message.loadingUrl;
-			
-
 			intervalClickerId = window.setInterval(clicker, timeInterval);
 		 	
-		 	let beaconLastPulseUrl = "https://beacon.clcert.cl/beacon/2.0/pulse/last";
-			// pulse = jsonFromUrl(beaconLastPulseUrl);
-			// console.log(pulse);
-
 		} else if (message.command === "choose") {
-			displayComment(randInt(0, totalComments));
+			displayComment(randInt(1, totalComments));
 		
-		} else if (message.command === "state") {
+		} else if (message.command === "state") {	
 			browser.runtime.sendMessage({
 				state: window.popupState
 			});
+			
+
+		} else if (message.command === "seed") {
+			if (message.err) {
+				console.log(err);
+			} else {
+				window.seed = message.seed;
+				Math.seedrandom(window.seed);
+				if (window.popupState === "loaded") {
+					hideCommentsLoadingIcon();
+					notifyLoad();
+					displayComment(randInt(1, totalComments));
+				}
+			}
 		}
 	});
 })();
