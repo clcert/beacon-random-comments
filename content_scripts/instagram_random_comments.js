@@ -9,8 +9,6 @@
 	let intervalClickerId;
 	let loadingGifUrl;
 	let totalComments = 0;
-	let pulse; 
-	
 
 	/**
 	 * Extracts the comment of the given index from the Instagram
@@ -86,6 +84,7 @@
 				displayComment(randInt(1, totalComments));
 			}
 			window.popupState = "loaded";
+			console.log("comments loaded");
 		}
 	};	
 
@@ -116,6 +115,21 @@
 	}
 
 
+	function jsonFromUrl(url, callback) {
+		let request = new XMLHttpRequest();
+		request.open("GET", url, true);
+		request.onload = function() {
+			const status = request.status;
+			if (status === 200) {
+				callback(null, request.responseText);
+			} else {
+				callback(status, null);
+			}
+		}
+		request.send();
+	}
+
+
 	/**
  	 * Makes the request to load the comments and choose randomly
  	 * using the beacon output
@@ -125,7 +139,25 @@
 			const  timeInterval = 500;
 			loadingGifUrl = message.loadingUrl;
 			intervalClickerId = window.setInterval(clicker, timeInterval);
-		 	
+
+			const beaconUrl = "https://beacon.clcert.cl/beacon/2.0/pulse/last";
+			jsonFromUrl(beaconUrl, (err, data) => {
+				if (err) {
+					console.log(err);
+				} else {
+					const seed = JSON.parse(data).pulse.outputValue;
+
+					window.seed = seed;
+					Math.seedrandom(seed);
+
+					if (window.popupState === "loaded") {
+						hideCommentsLoadingIcon();
+						notifyLoad();
+						displayComment(randInt(1, totalComments));
+					}
+				}
+			});
+
 		} else if (message.command === "choose") {
 			displayComment(randInt(1, totalComments));
 		
@@ -133,20 +165,6 @@
 			browser.runtime.sendMessage({
 				state: window.popupState
 			});
-			
-
-		} else if (message.command === "seed") {
-			if (message.err) {
-				console.log(err);
-			} else {
-				window.seed = message.seed;
-				Math.seedrandom(window.seed);
-				if (window.popupState === "loaded") {
-					hideCommentsLoadingIcon();
-					notifyLoad();
-					displayComment(randInt(1, totalComments));
-				}
-			}
-		}
+		} 
 	});
 })();
