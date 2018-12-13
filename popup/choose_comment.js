@@ -1,24 +1,15 @@
 
 /**
- * General report execute error function
-*/
-function reportExecuteScriptError(error) {
-  	document.querySelector("#popup-content").classList.add("hidden");
-  	document.querySelector("#error-content").classList.remove("hidden");
-	console.error(error);
-}
-
-
-/**
  * Loading Function's section
 */
 function listenClickToLoad() {
 	function sendLoadingMessage(e) {
 		function loadComments(tabs) {
-			let url = browser.extension.getURL("gif/loading.gif");
+			let gifUrl = browser.extension.getURL("gif/loading.gif");
 			browser.tabs.sendMessage(tabs[0].id, {
 				command: "load",
-				loadingUrl: url
+				loadingUrl: gifUrl,
+				url: tabs[0].url
 			}).then(listenForLoaded);
 			
 			let chooser = document.querySelector("#chooser");
@@ -93,25 +84,41 @@ function listenForState() {
 	browser.runtime.onMessage.addListener(handleState);
 }
 
-function askForState() {
+function executeSiteScript(url) {
+	browser.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
+
+	if (url.startsWith("https://www.instagram.com/p/")) {
+		browser.tabs.executeScript({file: "/content_scripts/instagram_random_comments.js"})
+			.then(listenClickToLoad);
+	} else {
+		console.log("no se pudo ejecutar el script");
+	}
+}
+
+function requestState() {
 	function reportError(error) {
-		console.error(error);
+		browser.tabs.query({active: true, currentWindow: true})
+			.then((tabs) => {
+				const url = tabs[0].url;
+				executeSiteScript(url);
+			});
 	}
 
-	function sendMessage(tabs)  {
+	function sendMessage(tabs) {
 		browser.tabs.sendMessage(tabs[0].id, {
-			command: "state"
-		});
+		command: "state",
+		url: tabs[0].url
+		}).catch(reportError);	
 	}
 
 	browser.tabs.query({active: true, currentWindow: true})
-			.then(sendMessage)
-			.then(listenForState)
-			.catch(reportError);
+		.then(sendMessage)
+		.then(listenForState);
 }
 
+
 browser.tabs.query({active: true, currentWindow: true})
-	.then(askForState)
-	.catch(reportExecuteScriptError);
+	.then(requestState);
+	
 
 

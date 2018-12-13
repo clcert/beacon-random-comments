@@ -4,11 +4,40 @@
 	}
 
 	window.hasRun = true;
-	window.popupState = "unloaded";
 
-	let intervalClickerId;
-	let loadingGifUrl;
-	let totalComments = 0;
+	const BEACON_URL = "https://beacon.clcert.cl/beacon/2.0/pulse/last";
+	let COMMENTS_DISPLAY_STATE = "block";
+	let COMMENTS_STATE = "unloaded";
+	let CURRENT_WORKING_URL;
+	let HIGHLIGHTED_COMMENT;
+	let INTERVAL_CLICKER_ID;
+	let LOADING_GIF_URL;
+	let SEED;
+	let TOTAL_COMMENTS = 0;
+	
+	function resetParameters() {	
+		COMMENTS_DISPLAY_STATE = "block";
+		COMMENTS_STATE = "unloaded";
+		CURRENT_WORKING_URL = null;
+		HIGHLIGHTED_COMMENT = null;
+		INTERVAL_CLICKER_ID = null;
+		LOADING_GIF_URL = null;
+		SEED = null;
+		TOTAL_COMMENTS = 0;
+	
+		return;
+	}
+
+
+	function getSeedState() {
+		let seed = "unloaded";
+		if (SEED) {
+			seed = SEED;
+		} else if (COMMENTS_DISPLAY_STATE === "none") {
+			seed = "requested";
+		}
+		return seed;
+	}
 
 	/**
 	 * Extracts the comment of the given index from the Instagram
@@ -24,17 +53,13 @@
 
 
 	function showComentsLoadingIcon() {
-		if (!window.displayState) {
-			window.displayState = "block";
-		}
-
-		if (window.displayState === "block") {
+		if (COMMENTS_DISPLAY_STATE === "block") {
 			let comments =  document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
 			comments.style.display = "none";
-			window.displayState = "none";
+			COMMENTS_DISPLAY_STATE = "none";
 			
 			let loadingIcon = document.createElement("img");
-			loadingIcon.setAttribute("src", loadingGifUrl);
+			loadingIcon.setAttribute("src", LOADING_GIF_URL);
 			loadingIcon.className = "loading-gif";
 			comments.parentNode.insertBefore(loadingIcon, comments.nextSibling);
 		}
@@ -42,12 +67,12 @@
 
 
 	function hideCommentsLoadingIcon() {
-		if (window.displayState === "none") {
+		if (COMMENTS_DISPLAY_STATE === "none") {
 			let comments =  document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
 			comments.style.display = "block";
 			comments.nextSibling.style.display = "none";
 
-			window.displayState = "block";	
+			COMMENTS_DISPLAY_STATE = "block";	
 		}
 	}
 
@@ -64,46 +89,42 @@
 	function clicker() {
 		try {
 			document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();	
-			showComentsLoadingIcon();
-			
 		} catch (err) {
-			clearInterval(intervalClickerId);
+			clearInterval(INTERVAL_CLICKER_ID);
 
 			while (true) {
 				try {
-					commentGetter(totalComments);
-					totalComments++;
+					commentGetter(TOTAL_COMMENTS);
+					TOTAL_COMMENTS++;
 				} catch(err) {
 					break;
 				}
 			}
 
-			if (window.seed) {
+			if (SEED) {
 				hideCommentsLoadingIcon();	
 				notifyLoad();
-				displayComment(randInt(1, totalComments));
+				displayComment(randInt(1, TOTAL_COMMENTS));
 			}
-			window.popupState = "loaded";
-			console.log("comments loaded");
+			COMMENTS_STATE = "loaded";
+			console.log("loaded comments");
 		}
 	};	
 
-	function randInt(min, max) {
-		return Math.floor(Math.random()*(max-min+1)+min);
-	}
 
 	function displayComment(commentId) {
+		console.log("el comment id es ", commentId);
 		commentId++;
-		if (!window.highlighted) {
-			window.highlighted = commentId;
+		if (!HIGHLIGHTED_COMMENT) {
+			HIGHLIGHTED_COMMENT = commentId;
 		}
 
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(";
 
-		let highlightedComment = document.querySelector(base + window.highlighted.toString() + ")");
+		let highlightedComment = document.querySelector(base + HIGHLIGHTED_COMMENT.toString() + ")");
 		highlightedComment.style.backgroundColor = "";
 
-		window.highlighted = commentId;
+		HIGHLIGHTED_COMMENT = commentId;
 
 		let comment = document.querySelector(base + commentId.toString() + ")");
 		comment.style.backgroundColor = "yellow";
@@ -112,23 +133,52 @@
 		});
 		document.querySelector("main").scrollIntoView();
 
-	}
+	}	
 
+	function requestBeaconSeed() {
+		function jsonFromUrl(url, callback) {
+			let request = new XMLHttpRequest();
+			request.open("GET", url, true);
+			request.onload = function() {
+				const status = request.status;
+				if (status === 200) {
+					callback(null, request.responseText);
+				} else {
+					callback(status, null);
+				}
+			}
+			request.send();
 
-	function jsonFromUrl(url, callback) {
-		let request = new XMLHttpRequest();
-		request.open("GET", url, true);
-		request.onload = function() {
-			const status = request.status;
-			if (status === 200) {
-				callback(null, request.responseText);
+			console.log("requested seed");
+		}
+
+		function jsonRequestCallback(err, data) {
+			console.log("callback executed");
+			if (err) {
+				console.log(err);
 			} else {
-				callback(status, null);
+				const seed = JSON.parse(data).pulse.outputValue;
+
+				SEED = seed;
+				console.log(seed);
+				Math.seedrandom(seed);
+
+				if (COMMENTS_STATE === "loaded") {
+					hideCommentsLoadingIcon();
+					notifyLoad();
+					displayComment(randInt(1, TOTAL_COMMENTS));
+				}
+
+				
 			}
 		}
-		request.send();
+
+		jsonFromUrl(BEACON_URL, jsonRequestCallback);
 	}
 
+	function randInt(min, max) {
+		return Math.floor(Math.random()*(max-min+1)+min);
+	}
 
 	/**
  	 * Makes the request to load the comments and choose randomly
@@ -136,35 +186,31 @@
 	*/
 	browser.runtime.onMessage.addListener((message) => {
 		if (message.command === "load") {
+			console.log("loading");
+
+			
+			LOADING_GIF_URL = message.loadingUrl;
+			showComentsLoadingIcon();
+			
 			const  timeInterval = 500;
-			loadingGifUrl = message.loadingUrl;
-			intervalClickerId = window.setInterval(clicker, timeInterval);
-
-			const beaconUrl = "https://beacon.clcert.cl/beacon/2.0/pulse/last";
-			jsonFromUrl(beaconUrl, (err, data) => {
-				if (err) {
-					console.log(err);
-				} else {
-					const seed = JSON.parse(data).pulse.outputValue;
-
-					window.seed = seed;
-					Math.seedrandom(seed);
-
-					if (window.popupState === "loaded") {
-						hideCommentsLoadingIcon();
-						notifyLoad();
-						displayComment(randInt(1, totalComments));
-					}
-				}
-			});
+			INTERVAL_CLICKER_ID = window.setInterval(clicker, timeInterval);
+			
+			CURRENT_WORKING_URL = message.url;
+			requestBeaconSeed();
 
 		} else if (message.command === "choose") {
-			displayComment(randInt(1, totalComments));
+			displayComment(randInt(1, TOTAL_COMMENTS));
 		
-		} else if (message.command === "state") {	
+		} else if (message.command === "state") {
+			if (message.url !== CURRENT_WORKING_URL) {
+				resetParameters();
+			}
+
 			browser.runtime.sendMessage({
-				state: window.popupState
+				state: COMMENTS_STATE,
+				seed: getSeedState()
 			});
+
 		} 
 	});
 })();
