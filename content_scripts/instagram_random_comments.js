@@ -46,8 +46,8 @@
 	function commentGetter(index) {
 		index += 2;
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(" + index.toString() + ")";
-		const stringComment = document.querySelector(base + "> div > div > div > span").innerHTML;
-		const stringAuthor = document.querySelector(base + " > div > div > div > h3 > a").innerHTML;
+		const stringComment = document.querySelector(base + "> div > div > div > div > span").innerHTML;
+		const stringAuthor = document.querySelector(base + " > div > div > div > div > h3 > a").innerHTML;
 		return {author: stringAuthor, comment: stringComment};
 	}
 
@@ -96,7 +96,7 @@
 				try {
 					commentGetter(TOTAL_COMMENTS);
 					TOTAL_COMMENTS++;
-				} catch(err) {
+					} catch(err) {
 					break;
 				}
 			}
@@ -160,7 +160,7 @@
 				const seed = JSON.parse(data).pulse.outputValue;
 
 				SEED = seed;
-				console.log(seed);
+				console.log("la semilla es ", seed);
 				Math.seedrandom(seed);
 
 				if (COMMENTS_STATE === "loaded") {
@@ -199,6 +199,7 @@
 			requestBeaconSeed();
 
 		} else if (message.command === "choose") {
+			console.log("escogiendo de un total de ", TOTAL_COMMENTS, " comentarios");
 			displayComment(randInt(1, TOTAL_COMMENTS));
 		
 		} else if (message.command === "state") {
