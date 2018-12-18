@@ -2,10 +2,10 @@
 
   "manifest_version": 2,
   "name": "Instagram Random Comments",
-  "version": "1.0.1",
+  "version": "1.0.2",
 
   "description": "Adds a browser action icon to the toolbar. Click the load button to load all comments. Click the get comment to get a random comment." ,
-  "homepage_url": "https://github.com/clcert/beacon-instagram-random-comments",
+  "homepage_url": "https://github.com/clcert/beacon-random-comments",
   "icons": {
     "64": "icons/dice-64.png"
   },

@@ -46,8 +46,8 @@
 	function commentGetter(index) {
 		index += 2;
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(" + index.toString() + ")";
-		const stringComment = document.querySelector(base + "> div > div > div > div > span").innerHTML;
-		const stringAuthor = document.querySelector(base + " > div > div > div > div > h3 > a").innerHTML;
+		const stringComment = document.querySelector(base + "> div > div > div > span").innerHTML;
+		const stringAuthor = document.querySelector(base + " > div > div > div > h3 > a").innerHTML;
 		return {author: stringAuthor, comment: stringComment};
 	}
 
@@ -95,6 +95,7 @@
 			while (true) {
 				try {
 					commentGetter(TOTAL_COMMENTS);
+					console.log("contando TOTAL_COMMENTS=", TOTAL_COMMENTS);
 					TOTAL_COMMENTS++;
 					} catch(err) {
 					break;

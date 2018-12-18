@@ -35,15 +35,16 @@ header {
     cursor: pointer;
 }
 
+.button, .button-blocked {
+	background-color: #E5F2F2;
+}
+
+.button:hover {
+	background-color: #CFF2F2;
+}
+
 .chooser, .chooser-blocked {
 	margin-top: 1em;
 	margin-bottom: 1em;
 }
 
-.chooser, .chooser-blocked {
-  background-color: #E5F2F2;
-}
-
-.chooser:hover {
-  background-color: #CFF2F2;
-}

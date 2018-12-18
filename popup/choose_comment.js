@@ -15,7 +15,7 @@ function listenClickToLoad() {
 			let chooser = document.querySelector("#chooser");
 			chooser.removeEventListener("click", sendLoadingMessage);
 			chooser.classList.remove("chooser");
-			chooser.classList.add("chooser-blocked");
+			chooser.classList.add("button-blocked");
 		}
 
 		function reportError(error) {
