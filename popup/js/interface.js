@@ -1,4 +1,3 @@
-
 /**
  * Loading Function's section
 */
@@ -120,5 +119,3 @@ function requestState() {
 browser.tabs.query({active: true, currentWindow: true})
 	.then(requestState);
 	
-
-
