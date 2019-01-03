@@ -5,6 +5,11 @@ html, body {
 	margin: 0;
 }
 
+body {
+	border-style: solid;
+	border-color: black;
+}
+
 header {
 	background-color: gray;
 	text-align: center;
@@ -17,6 +22,11 @@ main {
 footer {
 }
 
+img {
+	max-width: 100%;
+	max-height: 100%;
+	margin: 1px;
+}
 
 .preloader-wrapper.super-small {
   width: 12px;
@@ -25,6 +35,10 @@ footer {
 
 .title {
 	color: white;
+}
+
+.green-font {
+	color: green;
 }
 
 #actions {
