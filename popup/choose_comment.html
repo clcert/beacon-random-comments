@@ -10,13 +10,13 @@
 
 </head>
 <body>
-	<header>
+	<header class="center-align grey">
 		<h1 class="title white-text">Random Comments</h1>
 	</header>
 	
 	<main>			
 		<div id="content">
-			<div id="welcome" class="row">
+			<div id="welcome" class="row hide">
 				<div class="col s12">
 					<h2>Bienvenido</h2>
 					Sigue las instrucciones para iniciar tu sorteo!
@@ -29,11 +29,11 @@
 			</div>
 
 			<div id="loading" class="row hide">
-				<div class="col s12">
+				<div class="col s12 mt-1">
 					Cargando comentarios
 
-  					<i class="material-icons green-font">check</i>
-					<div class="preloader-wrapper super-small active right">
+  					<i class="material-icons green-font right">check</i>
+					<div class="preloader-wrapper super-small active right hide">
 						<div class="spinner-layer spinner-green-only">
 						  	<div class="circle-clipper left">
 						    	<div class="circle"></div>
@@ -47,8 +47,8 @@
 				</div>
 				<div class="col s12">
 					Escogiendo comentarios
-					<i class="material-icons green-font">check</i>
-					<div class="preloader-wrapper super-small active right">
+					<i class="material-icons green-font right">check</i>
+					<div class="preloader-wrapper super-small active right hide">
 						<div class="spinner-layer spinner-green-only">
 						  	<div class="circle-clipper left">
 						    	<div class="circle"></div>
@@ -60,17 +60,20 @@
 						</div>
 					</div>
 				</div>
-				<div class="col s12">
+				<div class="col s12 mt-1">
 					Por favor no recargues la ventana.
 				</div>
 			</div>
 
-			<div id="choosing" class="row hide">
-				<div class="col s12">
+			<div id="choosing" class="row">
+				<div class="col s1 mt-1"></div>
+				<div class="col s10 border-black mt-1">
 					El comentario pertenece a:
 					<br>
 					user6
 				</div>
+				<div class="col s1 mt-1"></div>
+
 				<div class="col s12">
 					<span>Sorteos Realizados: 12</span>
 				</div>
@@ -109,12 +112,10 @@
 		</div>
 
 		<div id="instructions">
-			<div class="row">
-				<div class="col s12 z-depth-1" style="padding-bottom: 0px">
-					<h2>Instrucciones</h2>
-				</div>
-			</div>
 			<ul class="collapsible">
+				<li>
+				  	<div class="collapsible-header grey white-text">Instrucciones</div>
+				</li>
 				<li class="active">
 					<div class="collapsible-header"><i class="material-icons black-text">play_arrow</i>Escoger Comentario</div>
 				  	<div class="collapsible-body">
