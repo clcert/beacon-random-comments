@@ -37,11 +37,19 @@ h2 {
 }
 
 .mr-1 {
-	margin-left: 1em;
+	margin-right: 1em;
 }
 
 .ml-1 {
-	margin-right: 1em;
+	margin-left: 1em;
+}
+
+.pr-1 {
+	padding-right: 1em;
+}
+
+.pl-1 {
+	padding-left: 1em;
 }
 
 .border-black {
