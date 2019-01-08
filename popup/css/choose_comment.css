@@ -57,3 +57,14 @@ h2 {
 	border-width: 1px;
 	border-color: black;
 }
+
+.border-dashed {
+	border-style: dashed;
+	border-width: 1px;
+	border-color: black;
+}
+
+.collapsible-body {
+	padding: 0;
+	background-color: #fafafa;
+}
