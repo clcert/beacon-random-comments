@@ -1,6 +1,6 @@
 @font-face {
 	font-family: Billabong;
-	src: url('Billabong.ttf');
+	src: url("../assets/fonts/Billabong.ttf");
 }
 
 html, body {
@@ -16,7 +16,13 @@ body {
 }
 
 header {
-	background-image: url("background.jpg");
+	background: url("../assets/images/background.jpg") no-repeat center;
+	background-size: 100%;
+}
+
+
+footer {
+	background: url("../assets/images/background.jpg") no-repeat center;
 	background-size: 100%;
 }
 
@@ -48,8 +54,26 @@ h2 {
 	text-justify: inter-word;
 }
 
+.center {
+  	display: block;
+ 	margin-left: auto;
+  	margin-right: auto;
+}
+
+.mt-0 {
+	margin-top: 0px;
+}
+
+.mb-0 {
+	margin-bottom: 0px;
+}
+
 .mt-1 {
 	margin-top: 1em;
+}
+
+.mt-2 {
+	margin-top: 2em;
 }
 
 .mr-1 {
@@ -66,6 +90,14 @@ h2 {
 
 .pt-1 {
 	padding-top: 1em;
+}
+
+.pt-10 {
+	padding-top: 10em;
+}
+
+.pb-1 {
+	padding-bottom: 1em;
 }
 
 .pr-1 {
@@ -105,3 +137,6 @@ h2 {
 	padding-top: 0.3em;
 }
 
+.logo-uchile {
+	height: 80px;
+}
