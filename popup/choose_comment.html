@@ -11,7 +11,7 @@
 </head>
 <body>
 	<header class="center-align">
-		<h1 class="title">Random Comments</h1>
+		<h1 class="title white-text">Random Comments</h1>
 	</header>
 	
 	<main>			
@@ -21,7 +21,7 @@
 					<div class="collapsible-header"><i class="material-icons black-text">play_arrow</i>Escoge un Comentario!</div>
 				  	<div class="collapsible-body">
 				  	
-				  		<div id="welcome" class="row hide">
+				  		<div id="welcome" class="row">
 							<div class="col s12 justify-text">
 								<h2 class="mt-1 center-align">Bienvenido!</h2>
 								Sigue las instrucciones para iniciar tu sorteo!
@@ -34,7 +34,7 @@
 						</div>
 
 
-						<div id="loading" class="row">
+						<div id="loading" class="row hide">
 							<div class="col s1 mt-1"></div>
 							<div class="col s8 mt-1">
 								Cargando comentarios
@@ -80,7 +80,7 @@
 
 						<div class="row border-dashed white ml-1 mr-1">
 							<div class="col s10 justify-text">
-								<span>Presiona "Sortear" para escoger un comentario aleatoriamente.</span>
+								<span>Haz click en "Iniciar Sorteo" para escoger un comentario aleatoriamente.</span>
 							</div>
 							<div class="col s2">
 								<i class="material-icons blue-text">info</i>
@@ -116,7 +116,7 @@
 
 						<div class="row border-dashed white ml-1 mr-1">
 							<div class="col s10">
-								Presiona "Terminar" para finalizar el sorteo o "Sortear" para seleccionar un nuevo comentario.
+								Haz click en "Terminar" para finalizar el sorteo o "Reintentar" para elegir un nuevo comentario.
 							</div>
 							<div class="col s2">
 								<i class="material-icons blue-text">info</i>
@@ -140,32 +140,25 @@
 							<div class="col s4">
 								<img src="canvas.png" alt="qr-code">
 							</div>
-
-							<div class="col s1"></div>
-							<div class="col s12">
-								<div class="border-black white pl-1 pr-1 pt-03">
-									Pulso: asdad Hora: asdasd
-									<br>
-									https://beacon.clcert.cl/...//168658
-								</div>
-							</div>
-
-							
-							<div class="col s6">
-									<a class="btn-small blue right mt-1"><i class="material-icons">share</i></a>
-								</div>
-								<div class="col s6">
-									<a class="btn-small blue left mt-1"><i class="material-icons">content_copy</i></a>
-								</div>
 						</div>
 						<div class="row border-dashed white ml-1 mr-1">
 							<div class="col s10 justify-text">
-								<span>Presiona </span><i class="material-icons tiny">share</i> <span> para compartir el link de verificabilidad de tu sorteo o </span><i class="material-icons tiny">content_copy</i><span> para copiar el link al portapapeles.</span>
+								Utiliza este <a>link</a> para asegurar a tus seguidores que el concurso fue <b>aleatorio</b>, <b>transparente</b> y <b>verificable</b>.
+								<span>Puedes compartirlo con </span><i class="material-icons tiny">share</i> <span> o copiarlo con </span><i class="material-icons tiny">content_copy</i>
 							</div>
 							<div class="col s2">
 								<i class="material-icons blue-text">info</i>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col s6">
+								<a class="btn-small blue right"><i class="material-icons">share</i></a>
+							</div>
+							<div class="col s6">
+								<a class="btn-small blue left"><i class="material-icons">content_copy</i></a>
+							</div>
+						</div>
+						
 				  	</div>
 				</li>
 			</ul>
