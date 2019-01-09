@@ -21,9 +21,9 @@
 					<div class="collapsible-header"><i class="material-icons black-text">play_arrow</i>Escoge un Comentario!</div>
 				  	<div class="collapsible-body">
 				  	
-				  		<div id="welcome" class="row">
-							<div class="col s12">
-								<h2 class="mt-1">Bienvenido!</h2>
+				  		<div id="welcome" class="row hide">
+							<div class="col s12 justify-text">
+								<h2 class="mt-1 center-align">Bienvenido!</h2>
 								Sigue las instrucciones para iniciar tu sorteo!
 								<br>
 								<br>
@@ -34,27 +34,33 @@
 						</div>
 
 
-						<div id="loading" class="row hide">
-							<div class="col s12 mt-1">
+						<div id="loading" class="row">
+							<div class="col s1 mt-1"></div>
+							<div class="col s8 mt-1">
 								Cargando comentarios
+							</div>
+							<div class="col s3 mt-1">
+								<i class="material-icons green-text right hide">check</i>
+								<div class="preloader-wrapper super-small active">
+									<div class="spinner-layer spinner-green-only">
+									  	<div class="circle-clipper left">
+									    	<div class="circle"></div>
+									  	</div><div class="gap-patch">
+									    	<div class="circle"></div>
+									  	</div><div class="circle-clipper right">
+									    	<div class="circle"></div>
+									  	</div>
+									</div>
+								</div>
+							</div>
 
-			  					<i class="material-icons green-text right">check</i>
-								<div class="preloader-wrapper super-small active right hide">
-									<div class="spinner-layer spinner-green-only">
-									  	<div class="circle-clipper left">
-									    	<div class="circle"></div>
-									  	</div><div class="gap-patch">
-									    	<div class="circle"></div>
-									  	</div><div class="circle-clipper right">
-									    	<div class="circle"></div>
-									  	</div>
-									</div>
-								</div>
-							</div>
-							<div class="col s12">
+							<div class="col s1 mt-1"></div>
+							<div class="col s8">
 								Escogiendo comentarios
-								<i class="material-icons green-text right">check</i>
-								<div class="preloader-wrapper super-small active right hide">
+							</div>
+							<div class="col s3">
+								<i class="material-icons green-text right hide">check</i>
+								<div class="preloader-wrapper super-small active">
 									<div class="spinner-layer spinner-green-only">
 									  	<div class="circle-clipper left">
 									    	<div class="circle"></div>
@@ -66,13 +72,14 @@
 									</div>
 								</div>
 							</div>
-							<div class="col s12 mt-1">
-								Por favor no recargues la ventana.
+
+							<div class="col s12 mt-1 bold-text">
+								<span class="ml-1"> Por favor no recargues la ventana.</span>
 							</div>
 						</div>
 
 						<div class="row border-dashed white ml-1 mr-1">
-							<div class="col s10">
+							<div class="col s10 justify-text">
 								<span>Presiona "Sortear" para escoger un comentario aleatoriamente.</span>
 							</div>
 							<div class="col s2">
@@ -109,7 +116,7 @@
 
 						<div class="row border-dashed white ml-1 mr-1">
 							<div class="col s10">
-								<span>Presiona "Terminar" para finalizar el sorteo o "Sortear" para seleccionar un nuevo comentario.</span>
+								Presiona "Terminar" para finalizar el sorteo o "Sortear" para seleccionar un nuevo comentario.
 							</div>
 							<div class="col s2">
 								<i class="material-icons blue-text">info</i>
@@ -152,7 +159,7 @@
 								</div>
 						</div>
 						<div class="row border-dashed white ml-1 mr-1">
-							<div class="col s10">
+							<div class="col s10 justify-text">
 								<span>Presiona </span><i class="material-icons tiny">share</i> <span> para compartir el link de verificabilidad de tu sorteo o </span><i class="material-icons tiny">content_copy</i><span> para copiar el link al portapapeles.</span>
 							</div>
 							<div class="col s2">

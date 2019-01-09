@@ -39,6 +39,11 @@ h2 {
 }
 
 
+.justify-text {
+	text-align: justify;
+	text-justify: inter-word;
+}
+
 .mt-1 {
 	margin-top: 1em;
 }
@@ -95,3 +100,4 @@ h2 {
 .row .col {
 	padding-top: 0.3em;
 }
+
