@@ -7,7 +7,7 @@
   "description": "Adds a browser action icon to the toolbar. Click the load button to load all comments. Click the get comment to get a random comment." ,
   "homepage_url": "https://github.com/clcert/beacon-random-comments",
   "icons": {
-    "64": "icons/dice-64.png"
+    "64": "assets/icons/dice-64.png"
   },
 
   "permissions": [
@@ -29,7 +29,7 @@
   ],
 
   "browser_action": {
-    "default_icon": "icons/dice-64.png",
+    "default_icon": "assets/icons/dice-64.png",
     "default_title": "Instagram Random Comments",
     "default_popup": "popup/choose_comment.html"
   },

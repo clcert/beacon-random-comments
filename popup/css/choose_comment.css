@@ -10,11 +10,6 @@ html, body {
 	margin: 0;
 }
 
-body {
-	border-style: solid;
-	border-color: black;
-}
-
 header {
 	background: url("../assets/images/background.jpg") no-repeat center;
 	background-size: 100%;
