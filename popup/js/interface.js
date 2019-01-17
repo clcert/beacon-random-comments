@@ -35,7 +35,7 @@ var StateHandler = function() {
 	let currentState = new Welcome(this);
 	currentState.init();
 
-	this.change = function(state) {
+	this.change = (state) => {
 		currentState = state;
 		currentState.init();
 	};
@@ -44,14 +44,14 @@ var StateHandler = function() {
 
 var Welcome = function(handler) {
 	this.handler = handler;
-	this.init = function() {
+	this.init = () => {
 		if (!elements.startBtn.hasEventListener) {
 			elements.startBtn.hasEventListener = true;
 			elements.startBtn.addEventListener("click", this.sendLoadingMessage);	
 		}
 	};
 
-	this.sendLoadingMessage = function(e) {
+	this.sendLoadingMessage = (e) => {
 		function loadComments(tabs) {
 			browser.tabs.sendMessage(tabs[0].id, {
 				command: "load",
@@ -74,7 +74,7 @@ var Welcome = function(handler) {
 var LoadingComments = function(handler) {
 	this.handler = handler;
 
-	this.init = function() {
+	this.init = () => {
 		$("#loading-check").hide();
 		$("#choosing-row").hide();
 		elements.notReloadMsg.isToggleFading = true;
@@ -82,7 +82,7 @@ var LoadingComments = function(handler) {
 		this.listenForComments();	
 	};
 
-	this.listenForComments = function() {
+	this.listenForComments = () => {
 		function handleLoaded(message) {
 			$("#loading-spinner").hide();
 			$("#loading-check").show();
@@ -130,7 +130,7 @@ var ChoosingComments = function(handler) {
 
 var Finish = function(handler) {
 	this.handler = handler;
-	this.init = function() {
+	this.init = () => {
 		$("#menu").collapsible("open", 1);
 		
 		if (!elements.retryBtn.hasEventListener) {
@@ -155,7 +155,7 @@ var Finish = function(handler) {
 var Share = function(handler) {
 	this.handler = handler;
 	
-	this.init = function() {
+	this.init = () => {
 		$("#menu").collapsible("open", 2);
 		$("main").animate({scrollTop: elements.main.clientHeight}, 800);
 
