@@ -34,7 +34,7 @@ var StateHandler = function() {
 	this.change = function(state) {
 		currentState = state;
 		currentState.init();
-	}
+	};
 };
 
 
@@ -95,7 +95,7 @@ var ChoosingComments = function(handler) {
 			
 		}, 3000);
 	};
-}
+};
 
 
 var Finish = function(handler) {
@@ -120,7 +120,7 @@ var Finish = function(handler) {
 		}
 		
 	}
-}
+};
 
 var Share = function(handler) {
 	this.handler = handler;
@@ -131,22 +131,21 @@ var Share = function(handler) {
 
 		if (!elements.clipboardBtn.hasEventListener) {
 			elements.clipboardBtn.hasEventListener = true;
+			console.log(elements.clipboardBtn);
 			elements.clipboardBtn.addEventListener("click", function() {
-				this.copyToClipboard("https://random.uchile.cl/");
+				M.toast({html: "Link copiado al portapapeles" , classes: "rounded"});
+				const el = document.createElement('textarea');
+				el.value = "random.uchile.cl";
+				document.body.appendChild(el);
+				el.select();
+				document.execCommand('copy');
+				document.body.removeChild(el);
 			});
 		}
 		
-	};
+	}
 
-	this.copyToClipboard = function(content) {
-		M.toast({html: "Link copiado al portapapeles" , classes: "rounded"});
-		const el = document.createElement("text-area");
-		el.value = content;
-		document.body.appendChild(el);
-		el.select();
-		document.execCommand("copy");
-		document.body.removeChild(el);
-	};
 }
+
 
 init();	
