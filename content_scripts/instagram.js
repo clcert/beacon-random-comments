@@ -95,7 +95,7 @@
 			while (true) {
 				try {
 					commentGetter(TOTAL_COMMENTS);
-					console.log("contando TOTAL_COMMENTS=", TOTAL_COMMENTS);
+					// console.log("contando TOTAL_COMMENTS=", TOTAL_COMMENTS);
 					TOTAL_COMMENTS++;
 					} catch(err) {
 					break;
@@ -103,9 +103,9 @@
 			}
 
 			if (SEED) {
-				hideCommentsLoadingIcon();	
+				// hideCommentsLoadingIcon();	
 				notifyLoad();
-				displayComment(randInt(1, TOTAL_COMMENTS));
+				// displayComment(randInt(1, TOTAL_COMMENTS));
 			}
 			COMMENTS_STATE = "loaded";
 			console.log("loaded comments");
@@ -115,6 +115,7 @@
 
 	function displayComment(commentId) {
 		console.log("el comment id es ", commentId);
+		hideCommentsLoadingIcon();
 		commentId++;
 		if (!HIGHLIGHTED_COMMENT) {
 			HIGHLIGHTED_COMMENT = commentId;
@@ -154,7 +155,6 @@
 		}
 
 		function jsonRequestCallback(err, data) {
-			console.log("callback executed");
 			if (err) {
 				console.log(err);
 			} else {
@@ -165,9 +165,9 @@
 				Math.seedrandom(seed);
 
 				if (COMMENTS_STATE === "loaded") {
-					hideCommentsLoadingIcon();
+					// hideCommentsLoadingIcon();
 					notifyLoad();
-					displayComment(randInt(1, TOTAL_COMMENTS));
+					// displayComment(randInt(1, TOTAL_COMMENTS));
 				}
 
 				
@@ -187,9 +187,6 @@
 	*/
 	browser.runtime.onMessage.addListener((message) => {
 		if (message.command === "load") {
-			console.log("loading");
-
-			
 			LOADING_GIF_URL = message.loadingUrl;
 			showComentsLoadingIcon();
 			
@@ -215,4 +212,5 @@
 
 		} 
 	});
+
 })();

@@ -8,7 +8,8 @@ let elements = {
 	finishBtn: document.getElementById("btn-finish"),
 	shareBtn: document.getElementById("btn-share"),
 	notReloadMsg: document.getElementById("not-reload-msg"),
-	clipboardBtn: document.getElementById("btn-clipboard")
+	clipboardBtn: document.getElementById("btn-clipboard"),
+	gifUrl: browser.extension.getURL("assets/gif/loading.gif")
 };
 
 let stateHandler = null;
@@ -26,6 +27,9 @@ function fadeMessageRecursively() {
 }
 
 
+function reportError(error) {
+	console.error(error);
+}
 
 var StateHandler = function() {
 	let currentState = new Welcome(this);
@@ -43,13 +47,27 @@ var Welcome = function(handler) {
 	this.init = function() {
 		if (!elements.startBtn.hasEventListener) {
 			elements.startBtn.hasEventListener = true;
-			elements.startBtn.addEventListener("click", function() {
-				$("#welcome").hide();
-				$("#loading-choosing").show();
-				handler.change(new LoadingComments(handler));
-			});	
+			elements.startBtn.addEventListener("click", this.sendLoadingMessage);	
 		}
 	};
+
+	this.sendLoadingMessage = function(e) {
+		function loadComments(tabs) {
+			browser.tabs.sendMessage(tabs[0].id, {
+				command: "load",
+				loadingUrl: elements.gifUrl,
+				url: tabs[0].url
+			}).then(handler.change(new LoadingComments(handler)));
+		}
+
+		$("#welcome").hide();
+		$("#loading-choosing").show();
+
+		browser.tabs.query({active: true, currentWindow: true})
+			.then(loadComments)
+			.catch(reportError);
+	};
+
 };
 
 
@@ -61,22 +79,24 @@ var LoadingComments = function(handler) {
 		$("#choosing-row").hide();
 		elements.notReloadMsg.isToggleFading = true;
 		fadeMessageRecursively();
-		this.requestComments();	
+		this.listenForComments();	
 	};
 
-	this.requestComments = function() {
-		window.setTimeout(function() {
+	this.listenForComments = function() {
+		function handleLoaded(message) {
 			$("#loading-spinner").hide();
 			$("#loading-check").show();
 			handler.change(new ChoosingComments(handler));
-		}, 3000);
-	};	
+		}
+
+		browser.runtime.onMessage.addListener(handleLoaded);
+  	};
 };
 
 
 var ChoosingComments = function(handler) {
 	this.handler = handler;
-	this.init = function() {
+	this.init = () => {
 		elements.notReloadMsg.isToggleFading = true;
 		fadeMessageRecursively();
 		$("#choosing-check").hide();
@@ -84,17 +104,27 @@ var ChoosingComments = function(handler) {
 		this.createDelay();
 	};
 
-	this.createDelay = function() {
-		window.setTimeout(function() {
+	this.createDelay = () => {
+		window.setTimeout(() => {
 			$("#choosing-spinner").hide();
 			$("#choosing-check").show();
-			window.setTimeout(function() {
-				elements.notReloadMsg.isToggleFading = false;
-				handler.change(new Finish(handler));
-			}, 700);
-			
+			window.setTimeout(this.sendChoosingMessage, 700);
 		}, 3000);
 	};
+
+	this.sendChoosingMessage = () => {
+		function chooseComment(tabs) {
+			browser.tabs.sendMessage(tabs[0].id, {
+				command: "choose"
+			});
+
+			elements.notReloadMsg.isToggleFading = false;
+			handler.change(new Finish(handler));
+		}
+
+		browser.tabs.query({active: true, currentWindow: true})
+			.then(chooseComment);
+	}
 };
 
 

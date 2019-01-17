@@ -1,7 +1,7 @@
 {
 
   "manifest_version": 2,
-  "name": "Instagram Random Comments",
+  "name": "Random Comments",
   "version": "1.0.2",
 
   "description": "Adds a browser action icon to the toolbar. Click the load button to load all comments. Click the get comment to get a random comment." ,
@@ -23,14 +23,14 @@
       "matches": ["https://www.instagram.com/p/*"],
       "js": [
         "content_scripts/seedrandom.min.js",
-        "content_scripts/instagram_random_comments.js"
+        "content_scripts/instagram.js"
        ]
     }
   ],
 
   "browser_action": {
     "default_icon": "assets/icons/dice-64.png",
-    "default_title": "Instagram Random Comments",
+    "default_title": "Random Comments",
     "default_popup": "popup/choose_comment.html"
   },
 
