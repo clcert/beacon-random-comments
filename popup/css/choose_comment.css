@@ -166,8 +166,51 @@ main {
 	font-size: 1.5rem;
 }
 
+.loading-check {
+	line-height: 0.5em;
+}
+
 .btn-flat {
 	text-transform: none;
 	color: white;
 	border-radius: 4px;
+}
+
+#toast-container {
+	top: auto !important;
+  	right: auto !important;
+  	bottom: 10%;
+  	left: 8%;
+  	min-width: 80% !important;
+  	font-size: 1em;
+  	text-align: center;
+}
+
+#share-modal {
+	margin-top: 40%;
+}
+
+.modal-content {
+	max-height: auto;
+}
+
+#share-twitter {
+	margin: auto auto;
+	background: url("../assets/images/twitter.png") no-repeat;
+	background-position: 30% 50%;
+	background-size: 80%;
+}
+
+#share-facebook {
+	margin: auto auto;
+	background: url("../assets/images/facebook.png") no-repeat;
+	background-position: 30% 50%;
+	background-size: 80%;
+}
+
+#share-telegram {
+	margin: auto auto;
+	background: url("../assets/images/telegram.png") no-repeat;
+	background-position: 30% 50%;
+	background-size: 80%;
 }

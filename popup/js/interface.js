@@ -1,121 +1,152 @@
-/**
- * Loading Function's section
-*/
-function listenClickToLoad() {
-	function sendLoadingMessage(e) {
-		function loadComments(tabs) {
-			let gifUrl = browser.extension.getURL("gif/loading.gif");
-			browser.tabs.sendMessage(tabs[0].id, {
-				command: "load",
-				loadingUrl: gifUrl,
-				url: tabs[0].url
-			}).then(listenForLoaded);
+
+
+let elements = {
+	welcomeDiv: document.getElementById("welcome"),
+	main: document.getElementsByTagName("main")[0],
+	startBtn: document.getElementById("btn-start"),
+	retryBtn: document.getElementById("btn-retry"),
+	finishBtn: document.getElementById("btn-finish"),
+	shareBtn: document.getElementById("btn-share"),
+	notReloadMsg: document.getElementById("not-reload-msg"),
+	clipboardBtn: document.getElementById("btn-clipboard")
+};
+
+let stateHandler = null;
+
+function init() {
+	$("#loading-choosing").hide();
+	stateHandler = new StateHandler();
+}
+
+
+function fadeMessageRecursively() {
+	if (elements.notReloadMsg.isToggleFading) {
+		$("#not-reload-msg").fadeToggle(800, fadeMessageRecursively);
+	}
+}
+
+
+
+var StateHandler = function() {
+	let currentState = new Welcome(this);
+	currentState.init();
+
+	this.change = function(state) {
+		currentState = state;
+		currentState.init();
+	}
+};
+
+
+var Welcome = function(handler) {
+	this.handler = handler;
+	this.init = function() {
+		if (!elements.startBtn.hasEventListener) {
+			elements.startBtn.hasEventListener = true;
+			elements.startBtn.addEventListener("click", function() {
+				$("#welcome").hide();
+				$("#loading-choosing").show();
+				handler.change(new LoadingComments(handler));
+			});	
+		}
+	};
+};
+
+
+var LoadingComments = function(handler) {
+	this.handler = handler;
+
+	this.init = function() {
+		$("#loading-check").hide();
+		$("#choosing-row").hide();
+		elements.notReloadMsg.isToggleFading = true;
+		fadeMessageRecursively();
+		this.requestComments();	
+	};
+
+	this.requestComments = function() {
+		window.setTimeout(function() {
+			$("#loading-spinner").hide();
+			$("#loading-check").show();
+			handler.change(new ChoosingComments(handler));
+		}, 3000);
+	};	
+};
+
+
+var ChoosingComments = function(handler) {
+	this.handler = handler;
+	this.init = function() {
+		elements.notReloadMsg.isToggleFading = true;
+		fadeMessageRecursively();
+		$("#choosing-check").hide();
+		$("#choosing-row").slideDown();
+		this.createDelay();
+	};
+
+	this.createDelay = function() {
+		window.setTimeout(function() {
+			$("#choosing-spinner").hide();
+			$("#choosing-check").show();
+			window.setTimeout(function() {
+				elements.notReloadMsg.isToggleFading = false;
+				handler.change(new Finish(handler));
+			}, 700);
 			
-			let chooser = document.querySelector("#chooser");
-			chooser.removeEventListener("click", sendLoadingMessage);
-			chooser.classList.remove("chooser");
-			chooser.classList.add("button-blocked");
-		}
-
-		function reportError(error) {
-			console.error(error);
-		}
-
-		browser.tabs.query({active: true, currentWindow: true})
-			.then(loadComments)
-			.catch(reportError);
-	}
-
-	document.querySelector("#chooser").addEventListener("click", sendLoadingMessage);
+		}, 3000);
+	};
 }
 
 
-function listenForLoaded() {
-	function reportError(error) {
-		console.error(error);
-	}
-
-	function handleLoaded(message) {
-		listenClickToChoose();
-	}	
-
-	browser.runtime.onMessage.addListener(handleLoaded);
-}
-
-
-
-
-function listenClickToChoose() {
-	let chooser = document.querySelector("#chooser");
-	chooser.classList.remove("chooser-blocked");
-	chooser.classList.add("chooser");
-
-	function sendChoosenMessage(e) {
-		function chooseComment(tabs) {
-			browser.tabs.sendMessage(tabs[0].id, {
-				command: "choose"
+var Finish = function(handler) {
+	this.handler = handler;
+	this.init = function() {
+		$("#menu").collapsible("open", 1);
+		
+		if (!elements.retryBtn.hasEventListener) {
+			elements.retryBtn.hasEventListener = true;
+			elements.retryBtn.addEventListener("click", function() {
+				$("#menu").collapsible("open", 0);
+				$("#choosing-spinner").show();
+				handler.change(new ChoosingComments(handler));
 			});
 		}
-
-		browser.tabs.query({active: true, currentWindow: true})
-			.then(chooseComment);
-	} 
-
-	document.querySelector("#chooser").addEventListener("click", sendChoosenMessage);
-}
-
-
-function listenForState() {
-	function reportError(error) {
-		console.error(error);
-	}
-
-
-	function handleState(message) {
-		if (message.state === "unloaded") {
-			listenClickToLoad();
-
-		} else if (message.state === "loaded") {
-			listenClickToChoose();
-		}
-	}
-
-	browser.runtime.onMessage.addListener(handleState);
-}
-
-function executeSiteScript(url) {
-	browser.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
-
-	if (url.startsWith("https://www.instagram.com/p/")) {
-		browser.tabs.executeScript({file: "/content_scripts/instagram_random_comments.js"})
-			.then(listenClickToLoad);
-	} else {
-		console.log("no se pudo ejecutar el script");
-	}
-}
-
-function requestState() {
-	function reportError(error) {
-		browser.tabs.query({active: true, currentWindow: true})
-			.then((tabs) => {
-				const url = tabs[0].url;
-				executeSiteScript(url);
+		
+		if (!elements.finishBtn.hasEventListener) {
+			elements.finishBtn.hasEventListener = true;
+			elements.finishBtn.addEventListener("click", function() {
+				handler.change(new Share(handler));
 			});
+		}
+		
 	}
-
-	function sendMessage(tabs) {
-		browser.tabs.sendMessage(tabs[0].id, {
-		command: "state",
-		url: tabs[0].url
-		}).catch(reportError);	
-	}
-
-	browser.tabs.query({active: true, currentWindow: true})
-		.then(sendMessage)
-		.then(listenForState);
 }
 
-
-browser.tabs.query({active: true, currentWindow: true})
-	.then(requestState);
+var Share = function(handler) {
+	this.handler = handler;
 	
+	this.init = function() {
+		$("#menu").collapsible("open", 2);
+		$("main").animate({scrollTop: elements.main.clientHeight}, 800);
+
+		if (!elements.clipboardBtn.hasEventListener) {
+			elements.clipboardBtn.hasEventListener = true;
+			elements.clipboardBtn.addEventListener("click", function() {
+				this.copyToClipboard("https://random.uchile.cl/");
+			});
+		}
+		
+	};
+
+	this.copyToClipboard = function(content) {
+		M.toast({html: "Link copiado al portapapeles" , classes: "rounded"});
+		const el = document.createElement("text-area");
+		el.value = content;
+		document.body.appendChild(el);
+		el.select();
+		document.execCommand("copy");
+		document.body.removeChild(el);
+	};
+}
+
+init();	

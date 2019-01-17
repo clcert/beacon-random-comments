@@ -10,15 +10,13 @@
 
 </head>
 <body>
-	
-	
 		<header class="center-align">
 			<h1 class="title white-text">Random Comments</h1>
 		</header>
 		
 		<main>			
-			<ul class="collapsible">
-				<li class="active">
+			<ul id="menu" class="collapsible">
+				<li id="choose-tab" class="active">
 					<div class="collapsible-header"><span class="enum-unicode">&#10102;</span>Escoge un Comentario!</div>
 				  	<div class="collapsible-body">
 				  	
@@ -30,52 +28,58 @@
 								<br>
 							</div>
 							<div class="col s12 center-align">
-								<a class="btn-small btn-flat bold-text blue">Iniciar Sorteo</a>
+								<a id="btn-start" class="btn-small btn-flat bold-text blue">Iniciar Sorteo</a>
 							</div>
 						</div>
 
-
-						<div id="loading" class="row hide">
-							<div class="col s1 mt-1"></div>
-							<div class="col s8 mt-1">
-								Cargando comentarios
+						<div id="loading-choosing">
+							<div id="loading-row" class="row">
+								<div class="col s1 mt-1"></div>
+								<div class="col s8 mt-1">
+									Cargando comentarios
+								</div>
+								<div class="col s3 mt-1">
+									<i id="loading-check" class="material-icons green-text left loading-check">check</i>
+									<div id="loading-spinner" class="preloader-wrapper super-small active">
+										<div class="spinner-layer spinner-green-only">
+										  	<div class="circle-clipper left">
+										    	<div class="circle"></div>
+										  	</div><div class="gap-patch">
+										    	<div class="circle"></div>
+										  	</div><div class="circle-clipper right">
+										    	<div class="circle"></div>
+										  	</div>
+										</div>
+									</div>
+								</div>
 							</div>
-							<div class="col s3 mt-1">
-								<i class="material-icons green-text right hide">check</i>
-								<div class="preloader-wrapper super-small active">
-									<div class="spinner-layer spinner-green-only">
-									  	<div class="circle-clipper left">
-									    	<div class="circle"></div>
-									  	</div><div class="gap-patch">
-									    	<div class="circle"></div>
-									  	</div><div class="circle-clipper right">
-									    	<div class="circle"></div>
-									  	</div>
+							
+
+							<div id="choosing-row" class="row">
+								<div class="col s1"></div>
+								<div class="col s8">
+									Escogiendo comentarios
+								</div>
+								<div class="col s3">
+									<i id="choosing-check" class="material-icons green-text left loading-check">check</i>
+									<div id="choosing-spinner" class="preloader-wrapper super-small active">
+										<div class="spinner-layer spinner-green-only">
+										  	<div class="circle-clipper left">
+										    	<div class="circle"></div>
+										  	</div><div class="gap-patch">
+										    	<div class="circle"></div>
+										  	</div><div class="circle-clipper right">
+										    	<div class="circle"></div>
+										  	</div>
+										</div>
 									</div>
 								</div>
 							</div>
 
-							<div class="col s1 mt-1"></div>
-							<div class="col s8">
-								Escogiendo comentarios
-							</div>
-							<div class="col s3">
-								<i class="material-icons green-text right hide">check</i>
-								<div class="preloader-wrapper super-small active">
-									<div class="spinner-layer spinner-green-only">
-									  	<div class="circle-clipper left">
-									    	<div class="circle"></div>
-									  	</div><div class="gap-patch">
-									    	<div class="circle"></div>
-									  	</div><div class="circle-clipper right">
-									    	<div class="circle"></div>
-									  	</div>
-									</div>
+							<div class="row">
+								<div class="col s12 mt-1 bold-text">
+									<span id="not-reload-msg" class="ml-1"> Por favor no recargues la ventana.</span>
 								</div>
-							</div>
-
-							<div class="col s12 mt-1 bold-text">
-								<span class="ml-1"> Por favor no recargues la ventana.</span>
 							</div>
 						</div>
 
@@ -91,7 +95,7 @@
 
 				  	</div>
 				</li>
-				<li>
+				<li id="finish-tab">
 				  	<div class="collapsible-header"><span class="enum-unicode">&#10103;</span> Terminar Sorteo</div>
 				  	<div class="collapsible-body">
 				  		
@@ -108,10 +112,10 @@
 								<span class="right mt-1 mr-1">Número de Intentos: 12</span>
 							</div>
 							<div class="col s6">
-								<a class="btn-small btn-flat bold-text blue ml-1 right">Reintentar</a>
+								<a id="btn-retry" class="btn-small btn-flat bold-text blue ml-1 right">Reintentar</a>
 							</div>
 							<div class="col s6">
-								<a class="btn-small btn-flat bold-text blue mr-1 left">Terminar</a>
+								<a id="btn-finish" class="btn-small btn-flat bold-text blue mr-1 left">Terminar</a>
 							</div>
 						</div>
 
@@ -125,7 +129,7 @@
 						</div>
 				  	</div>
 				</li>
-				<li>
+				<li id="share-tab">
 					<div class="collapsible-header"><i class="material-icons black-text">share</i>Compártelo!</div>
 				  	<div class="collapsible-body">
 				  		
@@ -153,16 +157,42 @@
 						</div>
 						<div class="row">
 							<div class="col s6">
-								<a class="btn-small btn-flat blue right"><i class="material-icons">share</i></a>
+								<a id="btn-share" href="#share-modal" class="btn-small btn-flat modal-trigger blue right"><i class="material-icons">share</i></a>
 							</div>
 							<div class="col s6">
-								<a class="btn-small btn-flat blue left"><i class="material-icons">content_copy</i></a>
+								<a id="btn-clipboard" class="btn-small btn-flat blue left"><i class="material-icons">content_copy</i></a>
 							</div>
 						</div>
 						
 				  	</div>
 				</li>
 			</ul>
+
+			<div id="share-modal" class="modal">
+			    <div class="modal-content">
+			      	<h4 class="center-align">Compartir</h4>
+			      	<div class="row">
+			      		<div class="col s4">
+			      			<div class="card">
+			      				<div id="share-twitter" class="card-content">
+			      				</div>
+			      			</div>
+			      		</div>
+			      		<div class="col s4">
+			      			<div class="card">
+			      				<div id="share-facebook" class="card-content">
+			      				</div>
+			      			</div>
+			      		</div>
+			      		<div class="col s4">
+			      			<div class="card">
+			      				<div id="share-telegram" class="card-content">
+			      				</div>
+			      			</div>
+			      		</div>
+			      	</div>
+			    </div>
+		  	</div>
 		</main>
 
 		<footer class="page-footer pt-03 white">
