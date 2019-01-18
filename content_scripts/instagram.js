@@ -14,6 +14,8 @@
 	let LOADING_GIF_URL;
 	let SEED;
 	let TOTAL_COMMENTS = 0;
+	let CURRENT_USER_ID = -1;
+	let USER_REQUESTS = 0; 
 	
 	function resetParameters() {	
 		COMMENTS_DISPLAY_STATE = "block";
@@ -77,8 +79,10 @@
 	}
 
 	function notifyLoad() {
+		console.log("notificando carga")
 		browser.runtime.sendMessage({
-			isLoaded: true
+			command: "loaded",
+			isLoaded: true,
 		});
 	}
 
@@ -117,9 +121,6 @@
 		console.log("el comment id es ", commentId);
 		hideCommentsLoadingIcon();
 		commentId++;
-		if (!HIGHLIGHTED_COMMENT) {
-			HIGHLIGHTED_COMMENT = commentId;
-		}
 
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(";
 
@@ -134,8 +135,20 @@
 			behavior: 'smooth'
 		});
 		document.querySelector("main").scrollIntoView();
-
 	}	
+
+	function getUser(commentId, callback) {
+		commentId++;
+		if (!HIGHLIGHTED_COMMENT) {
+			HIGHLIGHTED_COMMENT = commentId;
+		}
+
+		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(";
+		console.log(base + HIGHLIGHTED_COMMENT.toString() + ") > div > div > div > h3 > a");
+		return document.querySelector(base + commentId.toString() + ") > div > div > div > h3 > a").innerHTML;
+		
+	}
+
 
 	function requestBeaconSeed() {
 		function jsonFromUrl(url, callback) {
@@ -196,10 +209,25 @@
 			CURRENT_WORKING_URL = message.url;
 			requestBeaconSeed();
 
+		} else if (message.command === "user") {
+			console.log("choosing an user");
+			USER_REQUESTS++;
+			CURRENT_USER_ID = randInt(1, TOTAL_COMMENTS);
+			console.log(CURRENT_USER_ID);
+			const user = getUser(CURRENT_USER_ID);
+			console.log("sending user", user);
+			browser.runtime.sendMessage({
+				command: "user-response",
+				user: user,
+				counter: USER_REQUESTS
+			});
+
+
 		} else if (message.command === "choose") {
 			console.log("escogiendo de un total de ", TOTAL_COMMENTS, " comentarios");
-			displayComment(randInt(1, TOTAL_COMMENTS));
-		
+			displayComment(CURRENT_USER_ID);
+			
+
 		} else if (message.command === "state") {
 			if (message.url !== CURRENT_WORKING_URL) {
 				resetParameters();

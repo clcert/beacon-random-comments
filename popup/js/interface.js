@@ -7,8 +7,11 @@ let elements = {
 	retryBtn: document.getElementById("btn-retry"),
 	finishBtn: document.getElementById("btn-finish"),
 	shareBtn: document.getElementById("btn-share"),
-	notReloadMsg: document.getElementById("not-reload-msg"),
 	clipboardBtn: document.getElementById("btn-clipboard"),
+	notReloadMsg: document.getElementById("not-reload-msg"),
+	attempts: document.getElementById("attempts"),
+	finishUser: document.getElementById("finish-user"),
+	shareUser: document.getElementById("share-user"),
 	gifUrl: browser.extension.getURL("assets/gif/loading.gif")
 };
 
@@ -84,9 +87,21 @@ var LoadingComments = function(handler) {
 
 	this.listenForComments = () => {
 		function handleLoaded(message) {
-			$("#loading-spinner").hide();
-			$("#loading-check").show();
-			handler.change(new ChoosingComments(handler));
+			if (message.command === "loaded") {
+				$("#loading-spinner").hide();
+				$("#loading-check").show();
+				handler.change(new UserWaiting(handler));
+				removeLoadedListener();
+			}
+
+			// TODO
+			// if (message.command === "failed") {
+
+			// }
+		}
+
+		function removeLoadedListener(message) {
+			browser.runtime.onMessage.removeListener(handleLoaded);
 		}
 
 		browser.runtime.onMessage.addListener(handleLoaded);
@@ -94,13 +109,53 @@ var LoadingComments = function(handler) {
 };
 
 
+var UserWaiting = function(handler) {
+	this.handler = handler;
+
+	this.init = () => {
+		this.sendUserMessage();
+		this.listenForUser();
+	};
+
+	this.sendUserMessage = () => {
+		function requestUser(tabs) {
+			browser.tabs.sendMessage(tabs[0].id, {
+				command: "user"
+			});
+		}
+
+		browser.tabs.query({active: true, currentWindow: true})
+			.then(requestUser);
+	};
+
+	this.listenForUser = () => {
+		function handleUser(message) {
+			if (message.command === "user-response") {
+				elements.notReloadMsg.isToggleFading = true;
+				fadeMessageRecursively();
+				$("#choosing-check").hide();
+				$("#choosing-row").slideDown();
+				elements.finishUser.innerHTML = message.user;
+				elements.shareUser.innerHTML = message.user;
+				elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
+				console.log("user-response is", message.user);
+				handler.change(new ChoosingComments(handler));
+				removeUserListener();
+			}
+		}
+
+		function removeUserListener(message) {
+			browser.runtime.onMessage.removeListener(handleUser);
+		}
+
+		browser.runtime.onMessage.addListener(handleUser);
+	};
+};
+
+
 var ChoosingComments = function(handler) {
 	this.handler = handler;
 	this.init = () => {
-		elements.notReloadMsg.isToggleFading = true;
-		fadeMessageRecursively();
-		$("#choosing-check").hide();
-		$("#choosing-row").slideDown();
 		this.createDelay();
 	};
 
@@ -138,7 +193,7 @@ var Finish = function(handler) {
 			elements.retryBtn.addEventListener("click", function() {
 				$("#menu").collapsible("open", 0);
 				$("#choosing-spinner").show();
-				handler.change(new ChoosingComments(handler));
+				handler.change(new UserWaiting(handler));
 			});
 		}
 		
