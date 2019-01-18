@@ -1,6 +1,7 @@
 
 
 let elements = {
+	collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
 	welcomeDiv: document.getElementById("welcome"),
 	main: document.getElementsByTagName("main")[0],
 	startBtn: document.getElementById("btn-start"),
@@ -19,6 +20,11 @@ let stateHandler = null;
 
 function init() {
 	$("#loading-choosing").hide();
+
+	for (let i = 0; i < elements.collapsibleHeaders.length; i++) {
+	    elements.collapsibleHeaders[i].style.pointerEvents = 'none';
+	}
+
 	stateHandler = new StateHandler();
 }
 
@@ -135,12 +141,13 @@ var UserWaiting = function(handler) {
 				fadeMessageRecursively();
 				$("#choosing-check").hide();
 				$("#choosing-row").slideDown();
-				elements.finishUser.innerHTML = message.user;
-				elements.shareUser.innerHTML = message.user;
-				elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
-				console.log("user-response is", message.user);
-				handler.change(new ChoosingComments(handler));
-				removeUserListener();
+				window.setTimeout(function() {
+					elements.finishUser.innerHTML = message.user;
+					elements.shareUser.innerHTML = message.user;
+					elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
+					handler.change(new ChoosingComments(handler));
+					removeUserListener();
+				}, 1000);
 			}
 		}
 
@@ -164,7 +171,7 @@ var ChoosingComments = function(handler) {
 			$("#choosing-spinner").hide();
 			$("#choosing-check").show();
 			window.setTimeout(this.sendChoosingMessage, 700);
-		}, 3000);
+		}, 2000);
 	};
 
 	this.sendChoosingMessage = () => {
@@ -179,7 +186,7 @@ var ChoosingComments = function(handler) {
 
 		browser.tabs.query({active: true, currentWindow: true})
 			.then(chooseComment);
-	}
+	};
 };
 
 
@@ -204,7 +211,7 @@ var Finish = function(handler) {
 			});
 		}
 		
-	}
+	};
 };
 
 var Share = function(handler) {
@@ -226,9 +233,8 @@ var Share = function(handler) {
 				document.execCommand('copy');
 				document.body.removeChild(el);
 			});
-		}
-		
-	}
+		}	
+	};
 
 }
 

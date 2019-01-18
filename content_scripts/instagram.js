@@ -121,6 +121,9 @@
 		console.log("el comment id es ", commentId);
 		hideCommentsLoadingIcon();
 		commentId++;
+		if (!HIGHLIGHTED_COMMENT) {
+			HIGHLIGHTED_COMMENT = commentId;
+		}
 
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(";
 
@@ -139,12 +142,8 @@
 
 	function getUser(commentId, callback) {
 		commentId++;
-		if (!HIGHLIGHTED_COMMENT) {
-			HIGHLIGHTED_COMMENT = commentId;
-		}
-
+	
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(";
-		console.log(base + HIGHLIGHTED_COMMENT.toString() + ") > div > div > div > h3 > a");
 		return document.querySelector(base + commentId.toString() + ") > div > div > div > h3 > a").innerHTML;
 		
 	}
