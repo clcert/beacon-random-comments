@@ -1,5 +1,10 @@
 
-
+/**
+ *
+ * @type {{startBtn: HTMLElement, clipboardBtn: HTMLElement, collapsibleHeaders: HTMLCollectionOf<Element>,
+ * main: Element, welcomeDiv: HTMLElement, notReloadMsg: HTMLElement, gifUrl: *, finishBtn: HTMLElement,
+ * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
+ */
 let elements = {
 	collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
 	welcomeDiv: document.getElementById("welcome"),
@@ -16,8 +21,17 @@ let elements = {
 	gifUrl: browser.extension.getURL("assets/gif/loading.gif")
 };
 
+
+/**
+ *
+ * @type {null}
+ */
 let stateHandler = null;
 
+
+/**
+ *
+ */
 function init() {
 	$("#loading-choosing").hide();
 
@@ -29,6 +43,9 @@ function init() {
 }
 
 
+/**
+ *
+ */
 function fadeMessageRecursively() {
 	if (elements.notReloadMsg.isToggleFading) {
 		$("#not-reload-msg").fadeToggle(800, fadeMessageRecursively);
@@ -36,11 +53,20 @@ function fadeMessageRecursively() {
 }
 
 
+/**
+ *
+ * @param error
+ */
 function reportError(error) {
 	console.error(error);
 }
 
-var StateHandler = function() {
+
+/**
+ *
+ * @constructor
+ */
+let StateHandler = function() {
 	let currentState = new Welcome(this);
 	currentState.init();
 
@@ -51,7 +77,12 @@ var StateHandler = function() {
 };
 
 
-var Welcome = function(handler) {
+/**
+ *
+ * @param handler
+ * @constructor
+ */
+let Welcome = function(handler) {
 	this.handler = handler;
 	this.init = () => {
 		if (!elements.startBtn.hasEventListener) {
@@ -80,7 +111,12 @@ var Welcome = function(handler) {
 };
 
 
-var LoadingComments = function(handler) {
+/**
+ *
+ * @param handler
+ * @constructor
+ */
+let LoadingComments = function(handler) {
 	this.handler = handler;
 
 	this.init = () => {
@@ -115,7 +151,12 @@ var LoadingComments = function(handler) {
 };
 
 
-var UserWaiting = function(handler) {
+/**
+ *
+ * @param handler
+ * @constructor
+ */
+let UserWaiting = function(handler) {
 	this.handler = handler;
 
 	this.init = () => {
@@ -160,7 +201,12 @@ var UserWaiting = function(handler) {
 };
 
 
-var ChoosingComments = function(handler) {
+/**
+ *
+ * @param handler
+ * @constructor
+ */
+let ChoosingComments = function(handler) {
 	this.handler = handler;
 	this.init = () => {
 		this.createDelay();
@@ -190,7 +236,12 @@ var ChoosingComments = function(handler) {
 };
 
 
-var Finish = function(handler) {
+/**
+ *
+ * @param handler
+ * @constructor
+ */
+let Finish = function(handler) {
 	this.handler = handler;
 	this.init = () => {
 		$("#menu").collapsible("open", 1);
@@ -214,7 +265,8 @@ var Finish = function(handler) {
 	};
 };
 
-var Share = function(handler) {
+
+let Share = function(handler) {
 	this.handler = handler;
 	
 	this.init = () => {
@@ -236,7 +288,7 @@ var Share = function(handler) {
 		}	
 	};
 
-}
+};
 
 
 init();	
