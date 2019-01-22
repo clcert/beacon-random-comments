@@ -132,7 +132,8 @@ let LoadingComments = function(handler) {
 			if (message.command === "loaded") {
 				$("#loading-spinner").hide();
 				$("#loading-check").show();
-				handler.change(new UserWaiting(handler));
+
+				handler.change(new ChoosingComments(handler));
 				removeLoadedListener();
 			}
 
@@ -142,7 +143,7 @@ let LoadingComments = function(handler) {
 			// }
 		}
 
-		function removeLoadedListener(message) {
+		function removeLoadedListener() {
 			browser.runtime.onMessage.removeListener(handleLoaded);
 		}
 
@@ -156,74 +157,61 @@ let LoadingComments = function(handler) {
  * @param handler
  * @constructor
  */
-let UserWaiting = function(handler) {
+let ChoosingComments = function(handler) {
 	this.handler = handler;
-
 	this.init = () => {
-		this.sendUserMessage();
-		this.listenForUser();
+		$("#choosing-check").hide();
+		$("#choosing-spinner").show();
+		$("#choosing-row").slideDown();
+		requestComment();
 	};
 
-	this.sendUserMessage = () => {
-		function requestUser(tabs) {
+	let requestComment = () => {
+		function getComment(tabs) {
 			browser.tabs.sendMessage(tabs[0].id, {
-				command: "user"
+				command: "get",
 			});
+
+			listenForResponse();
 		}
 
 		browser.tabs.query({active: true, currentWindow: true})
-			.then(requestUser);
+			.then(getComment)
+			.catch(reportError);
 	};
 
-	this.listenForUser = () => {
-		function handleUser(message) {
-			if (message.command === "user-response") {
-				elements.notReloadMsg.isToggleFading = true;
-				fadeMessageRecursively();
-				$("#choosing-check").hide();
-				$("#choosing-row").slideDown();
-				window.setTimeout(function() {
+	let listenForResponse = () => {
+		function handleResponse(message) {
+			if (message.command === "chosen") {
+				window.setTimeout(() => {
+					removeHandler();
+
+					// Change chosen user at Finish and Share views
 					elements.finishUser.innerHTML = message.user;
 					elements.shareUser.innerHTML = message.user;
+
+					// Change attempts counter at Finish view
 					elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
-					handler.change(new ChoosingComments(handler));
-					removeUserListener();
+
+					$("#choosing-spinner").hide();
+					$("#choosing-check").show();
+
+					window.setTimeout(sendDisplayMessage, 700);
 				}, 1000);
 			}
 		}
 
-		function removeUserListener(message) {
-			browser.runtime.onMessage.removeListener(handleUser);
+		function removeHandler() {
+			browser.runtime.onMessage.removeListener(handleResponse);
 		}
 
-		browser.runtime.onMessage.addListener(handleUser);
-	};
-};
-
-
-/**
- *
- * @param handler
- * @constructor
- */
-let ChoosingComments = function(handler) {
-	this.handler = handler;
-	this.init = () => {
-		this.createDelay();
+		browser.runtime.onMessage.addListener(handleResponse);
 	};
 
-	this.createDelay = () => {
-		window.setTimeout(() => {
-			$("#choosing-spinner").hide();
-			$("#choosing-check").show();
-			window.setTimeout(this.sendChoosingMessage, 700);
-		}, 2000);
-	};
-
-	this.sendChoosingMessage = () => {
-		function chooseComment(tabs) {
+	let sendDisplayMessage = () => {
+		function displayComment(tabs) {
 			browser.tabs.sendMessage(tabs[0].id, {
-				command: "choose"
+				command: "display"
 			});
 
 			elements.notReloadMsg.isToggleFading = false;
@@ -231,7 +219,7 @@ let ChoosingComments = function(handler) {
 		}
 
 		browser.tabs.query({active: true, currentWindow: true})
-			.then(chooseComment);
+			.then(displayComment);
 	};
 };
 
@@ -251,7 +239,7 @@ let Finish = function(handler) {
 			elements.retryBtn.addEventListener("click", function() {
 				$("#menu").collapsible("open", 0);
 				$("#choosing-spinner").show();
-				handler.change(new UserWaiting(handler));
+				handler.change(new ChoosingComments(handler));
 			});
 		}
 		

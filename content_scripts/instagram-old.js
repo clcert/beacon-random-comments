@@ -140,9 +140,8 @@
 		document.querySelector("main").scrollIntoView();
 	}	
 
-	function getUser(commentId, callback) {
+	function getUser(commentId) {
 		commentId++;
-	
 		const base = "article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(";
 		return document.querySelector(base + commentId.toString() + ") > div > div > div > h3 > a").innerHTML;
 		
