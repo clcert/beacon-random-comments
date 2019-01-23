@@ -1,6 +1,7 @@
-# Random Comments
 
 <img align="right" src="screenshots/welcome.png"/>
+
+# Random Comments
 
 **Random Comments** es la extensión de navegador que te ayuda a realizar sorteos en tus redes sociales favoritas! Utilizando un valor aleatorio generado por el **Random UChile** podrás realizar tus sorteos de forma absolutamente **aleatoria**, **transparente** y **verificable**.
 
