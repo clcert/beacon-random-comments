@@ -22,8 +22,7 @@
     {
       "matches": ["https://www.instagram.com/p/*"],
       "js": [
-        "content_scripts/seedrandom.min.js",
-        "content_scripts/instagram.js"
+        "content_scripts/seedrandom.min.js"
        ]
     }
   ],

@@ -26,7 +26,7 @@ let elements = {
  *
  * @type {null}
  */
-let stateHandler = null;
+
 
 
 /**
@@ -39,7 +39,8 @@ function init() {
 	    elements.collapsibleHeaders[i].style.pointerEvents = 'none';
 	}
 
-	stateHandler = new StateHandler();
+	let stateHandler = new StateHandler();
+	stateHandler.init();
 }
 
 
@@ -67,13 +68,126 @@ function reportError(error) {
  * @constructor
  */
 let StateHandler = function() {
-	let currentState = new Welcome(this);
-	currentState.init();
+	let currentState;
+
+	this.init = () => {
+		/*
+			Every time the popup is opened it executes the corresponding content script. If the content script has been
+			loaded before it will not be loaded again (because window.hasRun guard at the beginning of the content script).
+		 */
+		console.log("executing script...");
+		browser.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
+		browser.tabs.executeScript({file: "/content_scripts/instagram.js"})
+			.then(requestState(this))
+			.catch(reportError);
+	};
 
 	this.change = (state) => {
 		currentState = state;
 		currentState.init();
 	};
+
+
+	let requestState = (handler) => {
+		function sendStateRequest(tabs) {
+			browser.tabs.sendMessage(tabs[0].id, {
+				command: "state",
+				url: tabs[0].url
+			});
+			listenForState(handler);
+		}
+
+		browser.tabs.query({active: true, currentWindow: true})
+			.then(sendStateRequest)
+			.catch(reportError);
+	};
+
+	let listenForState = (handler) => {
+		function stateHandler(message) {
+			if (message.command === "state-response") {
+				// Once received the state we remove the state listener
+				removeStateHandler();
+
+				if (message.state !== "load-waiter") {
+					// Hide welcome div
+					$("#welcome").hide();
+					$("#loading-choosing").show();
+				}
+
+				if (message.state === "seed-requester" || message.state === "comments-loader") {
+					$("#loading-check").hide();
+					$("#choosing-row").hide();
+				}
+
+				if (message.state === "get-comment-waiter" || message.state === "display-comment") {
+					$("#loading-spinner").hide();
+				}
+
+				switch (message.state) {
+					case "load-waiter":
+						currentState = new Welcome(handler);
+						break;
+					case "seed-requester":
+						currentState = new LoadingComments(handler);
+						break;
+					case "comments-loader":
+						currentState = new LoadingComments(handler);
+						break;
+					case "get-comment-waiter":
+						// Change chosen user at Finish and Share views
+						elements.finishUser.innerHTML = message.user;
+						elements.shareUser.innerHTML = message.user;
+
+						// Change attempts counter at Finish view
+						elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
+
+						if (message.counter) {
+							$("#choosing-spinner").hide();
+							currentState = new Finish(handler);
+						} else {
+							currentState = new RequestingComment(handler);
+						}
+
+						break;
+					case "display-comment":
+						$("#choosing-spinner").hide();
+
+						// Change chosen user at Finish and Share views
+						elements.finishUser.innerHTML = message.user;
+						elements.shareUser.innerHTML = message.user;
+
+						// Change attempts counter at Finish view
+						elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
+						currentState = new Finish(handler);
+
+						let sendDisplayMessage = () => {
+							function displayComment(tabs) {
+								browser.tabs.sendMessage(tabs[0].id, {
+									command: "display"
+								});
+
+								elements.notReloadMsg.isToggleFading = false;
+								handler.change(new Finish(handler));
+							}
+
+							browser.tabs.query({active: true, currentWindow: true})
+								.then(displayComment);
+						};
+						sendDisplayMessage();
+						break;
+				}
+
+				currentState.init();
+			}
+		}
+
+		function removeStateHandler() {
+			browser.runtime.onMessage.removeListener(stateHandler);
+		}
+
+		browser.runtime.onMessage.addListener(stateHandler);
+	};
+
 };
 
 
@@ -133,7 +247,7 @@ let LoadingComments = function(handler) {
 				$("#loading-spinner").hide();
 				$("#loading-check").show();
 
-				handler.change(new ChoosingComments(handler));
+				handler.change(new RequestingComment(handler));
 				removeLoadedListener();
 			}
 
@@ -152,12 +266,7 @@ let LoadingComments = function(handler) {
 };
 
 
-/**
- *
- * @param handler
- * @constructor
- */
-let ChoosingComments = function(handler) {
+let RequestingComment = function(handler) {
 	this.handler = handler;
 	this.init = () => {
 		$("#choosing-check").hide();
@@ -168,11 +277,12 @@ let ChoosingComments = function(handler) {
 
 	let requestComment = () => {
 		function getComment(tabs) {
+			console.log("requesting comment...");
 			browser.tabs.sendMessage(tabs[0].id, {
-				command: "get",
+				command: "get"
 			});
 
-			listenForResponse();
+			handler.change(new ChoosingComment(handler));
 		}
 
 		browser.tabs.query({active: true, currentWindow: true})
@@ -180,8 +290,24 @@ let ChoosingComments = function(handler) {
 			.catch(reportError);
 	};
 
-	let listenForResponse = () => {
-		function handleResponse(message) {
+
+};
+
+
+/**
+ *
+ * @param handler
+ * @constructor
+ */
+let ChoosingComment = function(handler) {
+	this.handler = handler;
+
+	this.init = () => {
+		listenForChosenResponse();
+	};
+
+	let listenForChosenResponse = () => {
+		function handleChosenResponse(message) {
 			if (message.command === "chosen") {
 				window.setTimeout(() => {
 					removeHandler();
@@ -197,15 +323,15 @@ let ChoosingComments = function(handler) {
 					$("#choosing-check").show();
 
 					window.setTimeout(sendDisplayMessage, 700);
-				}, 1000);
+				}, 1500);
 			}
 		}
 
 		function removeHandler() {
-			browser.runtime.onMessage.removeListener(handleResponse);
+			browser.runtime.onMessage.removeListener(handleChosenResponse);
 		}
 
-		browser.runtime.onMessage.addListener(handleResponse);
+		browser.runtime.onMessage.addListener(handleChosenResponse);
 	};
 
 	let sendDisplayMessage = () => {
@@ -239,7 +365,7 @@ let Finish = function(handler) {
 			elements.retryBtn.addEventListener("click", function() {
 				$("#menu").collapsible("open", 0);
 				$("#choosing-spinner").show();
-				handler.change(new ChoosingComments(handler));
+				handler.change(new RequestingComment(handler));
 			});
 		}
 		

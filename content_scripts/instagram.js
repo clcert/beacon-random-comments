@@ -31,10 +31,45 @@
      * @returns {{comment: string, user: string}}
      */
     function getComment(i) {
-        const user = elements.commentsList[i].querySelector("div > div > div > h3 > a").innerHTML;
-        const comment = elements.commentsList[i].querySelector("div > div > div > span").innerHTML;
-        return {user: user, comment: comment};
+        if (elements.commentsList) {
+            const user = elements.commentsList[i].querySelector("div > div > div > h3 > a").innerHTML;
+            const comment = elements.commentsList[i].querySelector("div > div > div > span").innerHTML;
+            return {user: user, comment: comment};
+        } else {
+            return {user: "dummy", comment: "dummy"};
+        }
+
     }
+
+
+    /**
+     *
+     * @param i
+     * @param color
+     */
+    function setCommentColor(i, color) {
+        let comment = elements.commentsList[i];
+        comment.style.backgroundColor = color;
+    }
+
+    function showComentsLoadingIcon() {
+        let comments =  document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
+        comments.style.display = "none";
+
+        let loadingIcon = document.createElement("img");
+        loadingIcon.setAttribute("src", elements.loadingGifURL);
+        loadingIcon.className = "loading-gif";
+        comments.parentNode.insertBefore(loadingIcon, comments.nextSibling);
+
+    }
+
+
+    function hideCommentsLoadingIcon() {
+        let comments =  document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
+        comments.style.display = "block";
+        comments.nextSibling.style.display = "none";
+    }
+
 
     /**
      *
@@ -48,6 +83,28 @@
             currentState = state;
             currentState.init();
         };
+
+        this.listenForStateRequest = () => {
+            function handleRequest(message) {
+                if (message.command === "state") {
+                    const comment = getComment(elements.currentCommentID);
+                    browser.runtime.sendMessage({
+                        command: "state-response",
+                        state: getStateName(),
+                        user: comment.user,
+                        comment: comment.comment,
+                        counter: elements.popupRequests
+                    });
+                    console.log("sent state", getStateName());
+                }
+            }
+
+            browser.runtime.onMessage.addListener(handleRequest);
+        };
+
+        let getStateName = () => {
+            return currentState.getName();
+        };
     };
 
 
@@ -58,9 +115,14 @@
      */
     let LoadWaiter = function (handler) {
         this.handler = handler;
+
         this.init = () => {
             console.log("Waiting to load...");
             listenToLoad();
+        };
+
+        this.getName = () => {
+            return "load-waiter";
         };
 
         let listenToLoad = () => {
@@ -94,6 +156,10 @@
         this.init = () => {
             console.log("Requesting seed...");
             requestSeed();
+        };
+
+        this.getName = () => {
+            return "seed-requester";
         };
 
         let requestToURL = (url, callback) => {
@@ -148,9 +214,13 @@
         this.handler = handler;
 
         this.init = () => {
+            console.log("loading comments...");
             loadComments();
         };
 
+        this.getName = () => {
+            return "comments-loader";
+        };
 
         let intervalClickerId = null;
         let loadComments = () => {
@@ -158,6 +228,7 @@
                 try {
                     document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
                 } catch(err) {
+                    console.log("loaded comments...");
                     clearInterval(intervalClickerId);
                     saveComments();
                 }
@@ -175,10 +246,54 @@
                 command: "loaded"
             });
 
-            handler.change(new DisplayComment(handler));
+            handler.change(new GetCommentWaiter(handler));
         };
     };
 
+
+    let GetCommentWaiter = function(handler) {
+        this.handler = handler;
+
+        this.init = () => {
+            console.log("waiting for get comment request...");
+            listenForGetCommentRequest();
+        };
+
+        this.getName = () => {
+            return "get-comment-waiter";
+        };
+
+        let listenForGetCommentRequest = () => {
+            function handleGetRequest(message) {
+                if (message.command === "get") {
+                    console.log("received get comment request...");
+                    removeGetListener();
+                    setCommentColor(elements.currentCommentID, "");
+
+                    elements.currentCommentID = randInt(0, elements.commentsList.length-1);
+                    elements.popupRequests++;
+
+                    console.log("sending comment,,,");
+                    const comment = getComment(elements.currentCommentID);
+                    browser.runtime.sendMessage({
+                        command: "chosen",
+                        user: comment.user,
+                        comment: comment.comment,
+                        counter: elements.popupRequests
+                    });
+
+                    handler.change(new DisplayComment(handler));
+                }
+            }
+
+            function removeGetListener() {
+                browser.runtime.onMessage.removeListener(handleGetRequest);
+            }
+
+            browser.runtime.onMessage.addListener(handleGetRequest);
+        };
+
+    };
 
     /**
      *
@@ -189,38 +304,35 @@
         this.handler = handler;
 
         this.init = () => {
-            listenForRequest();
+            console.log("listening to display...");
+            listenForDisplayRequest();
         };
 
-        let listenForRequest = () => {
-            function handleRequest(message) {
-                if (message.command === "get") {
-                    setCommentColor(elements.currentCommentID, "");
+        this.getName = () => {
+            return "display-comment";
+        };
 
-                    elements.currentCommentID = randInt(0, elements.commentsList.length-1);
-                    elements.popupRequests++;
+        let listenForDisplayRequest = () => {
+            function handleDisplayRequest(message) {
+                console.log("handling wea");
+                if (message.command === "display") {
+                    removeDisplayListener();
+                    console.log("displaying...");
 
-                    const comment = getComment(elements.currentCommentID);
-                    browser.runtime.sendMessage({
-                        command: "chosen",
-                        user: comment.user,
-                        comment: comment.comment,
-                        counter: elements.popupRequests
-                    });
-
-                } else if (message.command === "display") {
+                    console.log("displayed comment", elements.currentCommentID);
                     setCommentColor(elements.currentCommentID, "yellow");
                     scrollIntoComment(elements.currentCommentID);
+                    handler.change(new GetCommentWaiter(handler));
                 }
             }
 
-            browser.runtime.onMessage.addListener(handleRequest);
+            function removeDisplayListener() {
+                browser.runtime.onMessage.removeListener(handleDisplayRequest);
+            }
+
+            browser.runtime.onMessage.addListener(handleDisplayRequest);
         };
 
-        let setCommentColor = (i, color) => {
-            let comment = elements.commentsList[i];
-            comment.style.backgroundColor = color;
-        };
 
         let scrollIntoComment = (i) => {
             let comment = elements.commentsList[i];
@@ -231,5 +343,8 @@
         };
     };
 
-    new StateHandler();
+
+    let stateHandler = new StateHandler();
+    stateHandler.listenForStateRequest();
+
 }) ();
