@@ -7,11 +7,39 @@
 
     let elements = {
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
-        seed: null,
+        commentsDiv: null,
         commentsList: null,
         currentCommentID: 0,
-        popupRequests: 0
+        currentUrl: null,
+        debugging: false,
+        loadingGifURL: null,
+        popupRequests: 0,
+        seed: null
     };
+
+
+    function debugLog() {
+        if (elements.debugging) {
+            let str = "";
+            for (let i = 0; i < arguments.length; i++) {
+                str += arguments[i].toString();
+                if (i < arguments.length-1) {
+                    str += " ";
+                }
+            }
+            console.log(str);
+        }
+    }
+
+
+    function restartParams() {
+        elements.commentsDiv = null;
+        elements.commentsList = null;
+        elements.currentCommentID = 0;
+        elements.loadingGifURL = null;
+        elements.popupRequests = 0;
+        elements.seed = null;
+    }
 
 
     /**
@@ -53,21 +81,24 @@
     }
 
     function showComentsLoadingIcon() {
-        let comments =  document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
-        comments.style.display = "none";
+        if (!elements.commentsDiv) {
+            debugLog("adding loading icon div...");
+            elements.commentsDiv = document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
+            let loadingIcon = document.createElement("img");
+            loadingIcon.setAttribute("src", elements.loadingGifURL);
+            loadingIcon.className = "loading-gif";
+            elements.commentsDiv.parentNode.insertBefore(loadingIcon, elements.commentsDiv.nextSibling);
+        }
 
-        let loadingIcon = document.createElement("img");
-        loadingIcon.setAttribute("src", elements.loadingGifURL);
-        loadingIcon.className = "loading-gif";
-        comments.parentNode.insertBefore(loadingIcon, comments.nextSibling);
-
+        elements.commentsDiv.style.display = "none";
+        elements.commentsDiv.nextSibling.style.display = "block";
     }
 
 
     function hideCommentsLoadingIcon() {
-        let comments =  document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
-        comments.style.display = "block";
-        comments.nextSibling.style.display = "none";
+        elements.commentsDiv.nextSibling.style.display = "none";
+        elements.commentsDiv.style.display = "block";
+        debugLog("hidden comments");
     }
 
 
@@ -85,8 +116,22 @@
         };
 
         this.listenForStateRequest = () => {
+            let handler = this;
             function handleRequest(message) {
                 if (message.command === "state") {
+                    if (elements.currentUrl) {
+                        if (elements.currentUrl !== message.url) {
+                            debugLog("url changed");
+                            restartParams();
+                            elements.currentUrl = message.url;
+                            currentState = new LoadWaiter(handler);
+                            currentState.init();
+                        }
+                    } else {
+                        elements.currentUrl = message.url;
+                    }
+
+
                     const comment = getComment(elements.currentCommentID);
                     browser.runtime.sendMessage({
                         command: "state-response",
@@ -95,7 +140,7 @@
                         comment: comment.comment,
                         counter: elements.popupRequests
                     });
-                    console.log("sent state", getStateName());
+                    debugLog("sent state", getStateName());
                 }
             }
 
@@ -117,7 +162,7 @@
         this.handler = handler;
 
         this.init = () => {
-            console.log("Waiting to load...");
+            debugLog("Waiting to load...");
             listenToLoad();
         };
 
@@ -129,7 +174,11 @@
             function handleLoadRequest(message) {
                 if (message.command === "load") {
                     removeLoadListener();
-                    console.log("Start loading...");
+                    debugLog("Start loading...");
+                    elements.loadingGifURL = message.loadingURL;
+
+                    showComentsLoadingIcon();
+                    debugLog(message.loadingURL);
 
                     handler.change(new SeedRequester(handler));
                 }
@@ -154,7 +203,7 @@
         this.handler = handler;
 
         this.init = () => {
-            console.log("Requesting seed...");
+            debugLog("Requesting seed...");
             requestSeed();
         };
 
@@ -178,7 +227,7 @@
 
         let requestSeed = () => {
             requestToURL(elements.beaconURL, (err, data) => {
-                console.log("received request...");
+                debugLog("received request...");
                 if (err) {
                     console.error(err);
                     browser.runtime.sendMessage({
@@ -189,7 +238,7 @@
                 } else {
                     try {
                         elements.seed = JSON.parse(data).pulse.outputValue;
-                        console.log("seed is", elements.seed);
+                        debugLog("seed is", elements.seed);
                         Math.seedrandom(elements.seed);
                         handler.change(new CommentsLoader(handler));
                     } catch (e) {
@@ -214,7 +263,7 @@
         this.handler = handler;
 
         this.init = () => {
-            console.log("loading comments...");
+            debugLog("loading comments...");
             loadComments();
         };
 
@@ -228,7 +277,7 @@
                 try {
                     document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
                 } catch(err) {
-                    console.log("loaded comments...");
+                    debugLog("loaded comments...");
                     clearInterval(intervalClickerId);
                     saveComments();
                 }
@@ -251,11 +300,16 @@
     };
 
 
+    /**
+     *
+     * @param handler
+     * @constructor
+     */
     let GetCommentWaiter = function(handler) {
         this.handler = handler;
 
         this.init = () => {
-            console.log("waiting for get comment request...");
+            debugLog("waiting for get comment request...");
             listenForGetCommentRequest();
         };
 
@@ -266,14 +320,16 @@
         let listenForGetCommentRequest = () => {
             function handleGetRequest(message) {
                 if (message.command === "get") {
-                    console.log("received get comment request...");
+                    debugLog("received get comment request...");
                     removeGetListener();
                     setCommentColor(elements.currentCommentID, "");
+
+                    showComentsLoadingIcon();
 
                     elements.currentCommentID = randInt(0, elements.commentsList.length-1);
                     elements.popupRequests++;
 
-                    console.log("sending comment,,,");
+                    debugLog("sending comment,,,");
                     const comment = getComment(elements.currentCommentID);
                     browser.runtime.sendMessage({
                         command: "chosen",
@@ -283,6 +339,9 @@
                     });
 
                     handler.change(new DisplayComment(handler));
+
+                } else if (message.command === "finish") {
+                    handler.change(new Finished(handler));
                 }
             }
 
@@ -304,7 +363,7 @@
         this.handler = handler;
 
         this.init = () => {
-            console.log("listening to display...");
+            debugLog("listening to display...");
             listenForDisplayRequest();
         };
 
@@ -314,12 +373,11 @@
 
         let listenForDisplayRequest = () => {
             function handleDisplayRequest(message) {
-                console.log("handling wea");
                 if (message.command === "display") {
                     removeDisplayListener();
-                    console.log("displaying...");
-
-                    console.log("displayed comment", elements.currentCommentID);
+                    hideCommentsLoadingIcon();
+                    debugLog("displaying...");
+                    debugLog("displayed comment", elements.currentCommentID);
                     setCommentColor(elements.currentCommentID, "yellow");
                     scrollIntoComment(elements.currentCommentID);
                     handler.change(new GetCommentWaiter(handler));
@@ -341,6 +399,17 @@
             });
             document.querySelector("main").scrollIntoView();
         };
+    };
+
+
+    let Finished = function(handler) {
+        this.handler = handler;
+
+        this.init = () => {};
+
+        this.getName = () => {
+            return "finished";
+        }
     };
 
 

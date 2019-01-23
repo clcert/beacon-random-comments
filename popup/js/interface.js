@@ -6,6 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
+	debugging: false,
 	collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
 	welcomeDiv: document.getElementById("welcome"),
 	main: document.getElementsByTagName("main")[0],
@@ -18,16 +19,22 @@ let elements = {
 	attempts: document.getElementById("attempts"),
 	finishUser: document.getElementById("finish-user"),
 	shareUser: document.getElementById("share-user"),
-	gifUrl: browser.extension.getURL("assets/gif/loading.gif")
+	gifURL: browser.extension.getURL("assets/gif/loading.gif")
 };
 
 
-/**
- *
- * @type {null}
- */
-
-
+function debugLog() {
+	if (elements.debugging) {
+		let str = "";
+		for (let i = 0; i < arguments.length; i++) {
+			str += arguments[i].toString();
+			if (i < arguments.length-1) {
+				str += " ";
+			}
+		}
+		console.log(str);
+	}
+}
 
 /**
  *
@@ -75,7 +82,7 @@ let StateHandler = function() {
 			Every time the popup is opened it executes the corresponding content script. If the content script has been
 			loaded before it will not be loaded again (because window.hasRun guard at the beginning of the content script).
 		 */
-		console.log("executing script...");
+		debugLog("executing script...");
 		browser.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
 		browser.tabs.executeScript({file: "/content_scripts/instagram.js"})
 			.then(requestState(this))
@@ -112,6 +119,14 @@ let StateHandler = function() {
 					// Hide welcome div
 					$("#welcome").hide();
 					$("#loading-choosing").show();
+
+
+					// Change chosen user at Finish and Share views
+					elements.finishUser.innerHTML = message.user;
+					elements.shareUser.innerHTML = message.user;
+
+					// Change attempts counter at Finish view
+					elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
 				}
 
 				if (message.state === "seed-requester" || message.state === "comments-loader") {
@@ -134,12 +149,6 @@ let StateHandler = function() {
 						currentState = new LoadingComments(handler);
 						break;
 					case "get-comment-waiter":
-						// Change chosen user at Finish and Share views
-						elements.finishUser.innerHTML = message.user;
-						elements.shareUser.innerHTML = message.user;
-
-						// Change attempts counter at Finish view
-						elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
 
 						if (message.counter) {
 							$("#choosing-spinner").hide();
@@ -152,12 +161,6 @@ let StateHandler = function() {
 					case "display-comment":
 						$("#choosing-spinner").hide();
 
-						// Change chosen user at Finish and Share views
-						elements.finishUser.innerHTML = message.user;
-						elements.shareUser.innerHTML = message.user;
-
-						// Change attempts counter at Finish view
-						elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
 						currentState = new Finish(handler);
 
 						let sendDisplayMessage = () => {
@@ -175,6 +178,9 @@ let StateHandler = function() {
 						};
 						sendDisplayMessage();
 						break;
+
+					case "finished":
+						currentState = new Share(handler);
 				}
 
 				currentState.init();
@@ -209,7 +215,7 @@ let Welcome = function(handler) {
 		function loadComments(tabs) {
 			browser.tabs.sendMessage(tabs[0].id, {
 				command: "load",
-				loadingUrl: elements.gifUrl,
+				loadingURL: elements.gifURL,
 				url: tabs[0].url
 			}).then(handler.change(new LoadingComments(handler)));
 		}
@@ -266,6 +272,11 @@ let LoadingComments = function(handler) {
 };
 
 
+/**
+ *
+ * @param handler
+ * @constructor
+ */
 let RequestingComment = function(handler) {
 	this.handler = handler;
 	this.init = () => {
@@ -277,7 +288,7 @@ let RequestingComment = function(handler) {
 
 	let requestComment = () => {
 		function getComment(tabs) {
-			console.log("requesting comment...");
+			debugLog("requesting comment...");
 			browser.tabs.sendMessage(tabs[0].id, {
 				command: "get"
 			});
@@ -373,13 +384,30 @@ let Finish = function(handler) {
 			elements.finishBtn.hasEventListener = true;
 			elements.finishBtn.addEventListener("click", function() {
 				handler.change(new Share(handler));
+				sendFinishMessage();
 			});
 		}
 		
 	};
+
+	let sendFinishMessage = () => {
+		function requestFinish(tabs) {
+			browser.tabs.sendMessage(tabs[0].id, {
+				command: "finish"
+			});
+		}
+
+		browser.tabs.query({active: true, currentWindow: true})
+			.then(requestFinish);
+	};
 };
 
 
+/**
+ *
+ * @param handler
+ * @constructor
+ */
 let Share = function(handler) {
 	this.handler = handler;
 	
@@ -389,7 +417,6 @@ let Share = function(handler) {
 
 		if (!elements.clipboardBtn.hasEventListener) {
 			elements.clipboardBtn.hasEventListener = true;
-			console.log(elements.clipboardBtn);
 			elements.clipboardBtn.addEventListener("click", function() {
 				M.toast({html: "Link copiado al portapapeles" , classes: "rounded"});
 				const el = document.createElement('textarea');
