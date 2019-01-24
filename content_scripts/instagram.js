@@ -124,6 +124,7 @@
                             debugLog("url changed");
                             restartParams();
                             elements.currentUrl = message.url;
+                            currentState.removeListener();
                             currentState = new LoadWaiter(handler);
                             currentState.init();
                         }
@@ -160,20 +161,30 @@
      */
     let LoadWaiter = function (handler) {
         this.handler = handler;
+        let listener;
 
         this.init = () => {
             debugLog("Waiting to load...");
-            listenToLoad();
+            listenToLoad(this);
         };
 
         this.getName = () => {
             return "load-waiter";
         };
 
-        let listenToLoad = () => {
+        this.removeListener = () => {
+            if (listener) {
+                browser.runtime.onMessage.removeListener(listener);
+                listener = null;
+            }
+        };
+
+        let listenToLoad = (self) => {
             function handleLoadRequest(message) {
                 if (message.command === "load") {
-                    removeLoadListener();
+                    // Remove the load request listener.
+                    self.removeListener();
+
                     debugLog("Start loading...");
                     elements.loadingGifURL = message.loadingURL;
 
@@ -184,11 +195,8 @@
                 }
             }
 
-            function removeLoadListener() {
-                browser.runtime.onMessage.removeListener(handleLoadRequest);
-            }
-
-            browser.runtime.onMessage.addListener(handleLoadRequest);
+            listener = handleLoadRequest;
+            browser.runtime.onMessage.addListener(listener);
         };
 
     };
@@ -210,6 +218,8 @@
         this.getName = () => {
             return "seed-requester";
         };
+
+        this.removeListener = () => {};
 
         let requestToURL = (url, callback) => {
             let request = new XMLHttpRequest();
@@ -271,6 +281,8 @@
             return "comments-loader";
         };
 
+        this.removeListener = () => {};
+
         let intervalClickerId = null;
         let loadComments = () => {
             function clicker() {
@@ -307,21 +319,29 @@
      */
     let GetCommentWaiter = function(handler) {
         this.handler = handler;
+        let listener;
 
         this.init = () => {
             debugLog("waiting for get comment request...");
-            listenForGetCommentRequest();
+            listenForGetCommentRequest(this);
         };
 
         this.getName = () => {
             return "get-comment-waiter";
         };
 
-        let listenForGetCommentRequest = () => {
+        this.removeListener = () => {
+            if (listener) {
+                browser.runtime.onMessage.removeListener(listener);
+                listener = null;
+            }
+        };
+
+        let listenForGetCommentRequest = (self) => {
             function handleGetRequest(message) {
                 if (message.command === "get") {
                     debugLog("received get comment request...");
-                    removeGetListener();
+                    self.removeListener();
                     setCommentColor(elements.currentCommentID, "");
 
                     showComentsLoadingIcon();
@@ -345,11 +365,8 @@
                 }
             }
 
-            function removeGetListener() {
-                browser.runtime.onMessage.removeListener(handleGetRequest);
-            }
-
-            browser.runtime.onMessage.addListener(handleGetRequest);
+            listener = handleGetRequest;
+            browser.runtime.onMessage.addListener(listener);
         };
 
     };
@@ -361,20 +378,28 @@
      */
     let DisplayComment = function (handler) {
         this.handler = handler;
+        let listener;
 
         this.init = () => {
             debugLog("listening to display...");
-            listenForDisplayRequest();
+            listenForDisplayRequest(this);
         };
 
         this.getName = () => {
             return "display-comment";
         };
 
-        let listenForDisplayRequest = () => {
+        this.removeListener = () => {
+            if (listener) {
+                browser.runtime.onMessage.removeListener(listener);
+                listener = null;
+            }
+        };
+
+        let listenForDisplayRequest = (self) => {
             function handleDisplayRequest(message) {
                 if (message.command === "display") {
-                    removeDisplayListener();
+                    self.removeListener();
                     hideCommentsLoadingIcon();
                     debugLog("displaying...");
                     debugLog("displayed comment", elements.currentCommentID);
@@ -384,11 +409,8 @@
                 }
             }
 
-            function removeDisplayListener() {
-                browser.runtime.onMessage.removeListener(handleDisplayRequest);
-            }
-
-            browser.runtime.onMessage.addListener(handleDisplayRequest);
+            listener = handleDisplayRequest;
+            browser.runtime.onMessage.addListener(listener);
         };
 
 
@@ -409,7 +431,9 @@
 
         this.getName = () => {
             return "finished";
-        }
+        };
+
+        this.removeListener = () => {};
     };
 
 
