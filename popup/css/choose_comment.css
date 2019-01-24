@@ -186,7 +186,7 @@ main {
   	text-align: center;
 }
 
-#share-modal {
+#share-modal, #error-modal {
 	margin-top: 40%;
 }
 

@@ -6,7 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: false,
+    debugging: true,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
     main: document.getElementsByTagName("main")[0],
@@ -78,15 +78,48 @@ let StateHandler = function() {
     let currentState;
 
     this.init = () => {
-        /*
-            Every time the popup is opened it executes the corresponding content script. If the content script has been
-            loaded before it will not be loaded again (because window.hasRun guard at the beginning of the content script).
-         */
-        debugLog("executing script...");
-        browser.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
-        browser.tabs.executeScript({file: "/content_scripts/instagram.js"})
-            .then(requestState(this))
-            .catch(reportError);
+        let urlsPatterns = [
+            /^(https:\/\/www.instagram.com\/p\/)[A-Za-z0-9_]+\/$/i
+        ];
+
+        browser.tabs.query({active: true, currentWindow: true})
+            .then((tabs) => {
+                let currentURL = tabs[0].url;
+                let isValidURL = false;
+                for (let i = 0; i < urlsPatterns.length; i++) {
+                    if (urlsPatterns[i].test(currentURL)) {
+                        isValidURL = true;
+                        break;
+                    }
+                }
+
+                if (isValidURL) {
+                    debugLog("valid url");
+                    /*
+                        Every time the popup is opened it executes the corresponding content script. If the content script has been
+                        loaded before it will not be loaded again (because window.hasRun guard at the beginning of the content script).
+                    */
+                    debugLog("executing script...");
+                    browser.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
+                    browser.tabs.executeScript({file: "/content_scripts/instagram.js"})
+                        .then(requestState(this))
+                        .catch(reportError);
+                } else {
+                    debugLog("invalid url");
+                    try {
+                        $(document).ready(function() {
+                            $("#error-modal").modal({dismissible: false});
+                            $("#error-modal").modal("open");
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
+
+
+                }
+            });
+
+
     };
 
     this.change = (state) => {

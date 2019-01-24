@@ -80,7 +80,7 @@
         comment.style.backgroundColor = color;
     }
 
-    function showComentsLoadingIcon() {
+    function showCommentsLoadingIcon() {
         if (!elements.commentsDiv) {
             debugLog("adding loading icon div...");
             elements.commentsDiv = document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1)");
@@ -188,7 +188,7 @@
                     debugLog("Start loading...");
                     elements.loadingGifURL = message.loadingURL;
 
-                    showComentsLoadingIcon();
+                    showCommentsLoadingIcon();
                     debugLog(message.loadingURL);
 
                     handler.change(new SeedRequester(handler));
@@ -344,7 +344,7 @@
                     self.removeListener();
                     setCommentColor(elements.currentCommentID, "");
 
-                    showComentsLoadingIcon();
+                    showCommentsLoadingIcon();
 
                     elements.currentCommentID = randInt(0, elements.commentsList.length-1);
                     elements.popupRequests++;
@@ -361,6 +361,7 @@
                     handler.change(new DisplayComment(handler));
 
                 } else if (message.command === "finish") {
+                    self.removeListener();
                     handler.change(new Finished(handler));
                 }
             }
