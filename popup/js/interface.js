@@ -19,7 +19,7 @@ let elements = {
     attempts: document.getElementById("attempts"),
     finishUser: document.getElementById("finish-user"),
     shareUser: document.getElementById("share-user"),
-    gifURL: browser.extension.getURL("assets/gif/loading.gif")
+    gifURL: chrome.extension.getURL("assets/gif/loading.gif")
 };
 
 
@@ -82,8 +82,8 @@ let StateHandler = function() {
             /^(https:\/\/www.instagram.com\/p\/)[A-Za-z0-9_]+\/$/i
         ];
 
-        browser.tabs.query({active: true, currentWindow: true})
-            .then((tabs) => {
+        let self = this;
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                 let currentURL = tabs[0].url;
                 let isValidURL = false;
                 for (let i = 0; i < urlsPatterns.length; i++) {
@@ -100,10 +100,14 @@ let StateHandler = function() {
                         loaded before it will not be loaded again (because window.hasRun guard at the beginning of the content script).
                     */
                     debugLog("executing script...");
-                    browser.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
-                    browser.tabs.executeScript({file: "/content_scripts/instagram.js"})
-                        .then(requestState(this))
-                        .catch(reportError);
+                    chrome.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
+                    chrome.tabs.executeScript({file: "/content_scripts/instagram.js"}, () => {
+                        try {
+                            requestState(self);
+                        } catch (e) {
+                            reportError(e);
+                        }
+                    });
                 } else {
                     debugLog("invalid url");
                     try {
@@ -130,21 +134,26 @@ let StateHandler = function() {
 
     let requestState = (handler) => {
         function sendStateRequest(tabs) {
-            browser.tabs.sendMessage(tabs[0].id, {
+            chrome.tabs.sendMessage(tabs[0].id, {
                 command: "state",
                 url: tabs[0].url
             });
             listenForState(handler);
         }
 
-        browser.tabs.query({active: true, currentWindow: true})
-            .then(sendStateRequest)
-            .catch(reportError);
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            try {
+                sendStateRequest(tabs);
+            } catch (e) {
+                reportError(e);
+            }
+        });
     };
 
     let listenForState = (handler) => {
         function stateHandler(message) {
             if (message.command === "state-response") {
+                debugLog("received state response:", message.state);
                 // Once received the state we remove the state listener
                 removeStateHandler();
 
@@ -198,7 +207,7 @@ let StateHandler = function() {
 
                         let sendDisplayMessage = () => {
                             function displayComment(tabs) {
-                                browser.tabs.sendMessage(tabs[0].id, {
+                                chrome.tabs.sendMessage(tabs[0].id, {
                                     command: "display"
                                 });
 
@@ -206,8 +215,13 @@ let StateHandler = function() {
                                 handler.change(new Finish(handler));
                             }
 
-                            browser.tabs.query({active: true, currentWindow: true})
-                                .then(displayComment);
+                            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                                try {
+                                    displayComment(tabs);
+                                } catch (e) {
+                                    reportError(e);
+                                }
+                            });
                         };
                         sendDisplayMessage();
                         break;
@@ -221,10 +235,11 @@ let StateHandler = function() {
         }
 
         function removeStateHandler() {
-            browser.runtime.onMessage.removeListener(stateHandler);
+            chrome.runtime.onMessage.removeListener(stateHandler);
         }
 
-        browser.runtime.onMessage.addListener(stateHandler);
+        debugLog("listening for state...");
+        chrome.runtime.onMessage.addListener(stateHandler);
     };
 
 };
@@ -238,27 +253,39 @@ let StateHandler = function() {
 let Welcome = function(handler) {
     this.handler = handler;
     this.init = () => {
-        if (!elements.startBtn.hasEventListener) {
-            elements.startBtn.hasEventListener = true;
-            elements.startBtn.addEventListener("click", this.sendLoadingMessage);
+
+        try {
+            if (!elements.startBtn.hasEventListener) {
+                debugLog("adding start btn event listener");
+                elements.startBtn.hasEventListener = true;
+                elements.startBtn.addEventListener("click", this.sendLoadingMessage);
+            }
+        } catch (e) {
+            reportError(e);
         }
+
+
     };
 
     this.sendLoadingMessage = (e) => {
         function loadComments(tabs) {
-            browser.tabs.sendMessage(tabs[0].id, {
+            chrome.tabs.sendMessage(tabs[0].id, {
                 command: "load",
                 loadingURL: elements.gifURL,
                 url: tabs[0].url
-            }).then(handler.change(new LoadingComments(handler)));
+            }, () => {handler.change(new LoadingComments(handler))});
         }
 
         $("#welcome").hide();
         $("#loading-choosing").show();
 
-        browser.tabs.query({active: true, currentWindow: true})
-            .then(loadComments)
-            .catch(reportError);
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            try {
+                loadComments(tabs);
+            } catch (e) {
+                reportError(e);
+            }
+        })
     };
 
 };
@@ -297,10 +324,10 @@ let LoadingComments = function(handler) {
         }
 
         function removeLoadedListener() {
-            browser.runtime.onMessage.removeListener(handleLoaded);
+            chrome.runtime.onMessage.removeListener(handleLoaded);
         }
 
-        browser.runtime.onMessage.addListener(handleLoaded);
+        chrome.runtime.onMessage.addListener(handleLoaded);
     };
 };
 
@@ -322,16 +349,20 @@ let RequestingComment = function(handler) {
     let requestComment = () => {
         function getComment(tabs) {
             debugLog("requesting comment...");
-            browser.tabs.sendMessage(tabs[0].id, {
+            chrome.tabs.sendMessage(tabs[0].id, {
                 command: "get"
             });
 
             handler.change(new ChoosingComment(handler));
         }
 
-        browser.tabs.query({active: true, currentWindow: true})
-            .then(getComment)
-            .catch(reportError);
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            try {
+                getComment(tabs);
+            } catch (e) {
+                reportError(e);
+            }
+        });
     };
 
 
@@ -372,15 +403,15 @@ let ChoosingComment = function(handler) {
         }
 
         function removeHandler() {
-            browser.runtime.onMessage.removeListener(handleChosenResponse);
+            chrome.runtime.onMessage.removeListener(handleChosenResponse);
         }
 
-        browser.runtime.onMessage.addListener(handleChosenResponse);
+        chrome.runtime.onMessage.addListener(handleChosenResponse);
     };
 
     let sendDisplayMessage = () => {
         function displayComment(tabs) {
-            browser.tabs.sendMessage(tabs[0].id, {
+            chrome.tabs.sendMessage(tabs[0].id, {
                 command: "display"
             });
 
@@ -388,8 +419,13 @@ let ChoosingComment = function(handler) {
             handler.change(new Finish(handler));
         }
 
-        browser.tabs.query({active: true, currentWindow: true})
-            .then(displayComment);
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            try {
+                displayComment(tabs);
+            } catch (e) {
+                reportError(e);
+            }
+        });
     };
 };
 
@@ -425,13 +461,18 @@ let Finish = function(handler) {
 
     let sendFinishMessage = () => {
         function requestFinish(tabs) {
-            browser.tabs.sendMessage(tabs[0].id, {
+            chrome.tabs.sendMessage(tabs[0].id, {
                 command: "finish"
             });
         }
 
-        browser.tabs.query({active: true, currentWindow: true})
-            .then(requestFinish);
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            try {
+                requestFinish(tabs);
+            } catch (e) {
+                reportError(e);
+            }
+        });
     };
 };
 

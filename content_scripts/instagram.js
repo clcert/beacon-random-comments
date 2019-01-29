@@ -11,7 +11,7 @@
         commentsList: null,
         currentCommentID: 0,
         currentUrl: null,
-        debugging: false,
+        debugging: true,
         loadingGifURL: null,
         popupRequests: 0,
         seed: null
@@ -115,9 +115,10 @@
             currentState.init();
         };
 
-        this.listenForStateRequest = () => {
-            let handler = this;
+        let listenForStateRequest = (self) => {
+            debugLog("listening to send state...");
             function handleRequest(message) {
+                debugLog("received state request");
                 if (message.command === "state") {
                     if (elements.currentUrl) {
                         if (elements.currentUrl !== message.url) {
@@ -125,7 +126,7 @@
                             restartParams();
                             elements.currentUrl = message.url;
                             currentState.removeListener();
-                            currentState = new LoadWaiter(handler);
+                            currentState = new LoadWaiter(self);
                             currentState.init();
                         }
                     } else {
@@ -134,7 +135,7 @@
 
 
                     const comment = getComment(elements.currentCommentID);
-                    browser.runtime.sendMessage({
+                    chrome.runtime.sendMessage({
                         command: "state-response",
                         state: getStateName(),
                         user: comment.user,
@@ -145,12 +146,15 @@
                 }
             }
 
-            browser.runtime.onMessage.addListener(handleRequest);
+            debugLog("listening to send state...");
+            chrome.runtime.onMessage.addListener(handleRequest);
         };
 
         let getStateName = () => {
             return currentState.getName();
         };
+
+        listenForStateRequest(this);
     };
 
 
@@ -174,7 +178,7 @@
 
         this.removeListener = () => {
             if (listener) {
-                browser.runtime.onMessage.removeListener(listener);
+                chrome.runtime.onMessage.removeListener(listener);
                 listener = null;
             }
         };
@@ -196,7 +200,7 @@
             }
 
             listener = handleLoadRequest;
-            browser.runtime.onMessage.addListener(listener);
+            chrome.runtime.onMessage.addListener(listener);
         };
 
     };
@@ -240,7 +244,7 @@
                 debugLog("received request...");
                 if (err) {
                     console.error(err);
-                    browser.runtime.sendMessage({
+                    chrome.runtime.sendMessage({
                         command: "failed",
                         detail: err
                     });
@@ -253,7 +257,7 @@
                         handler.change(new CommentsLoader(handler));
                     } catch (e) {
                         console.error(e);
-                        browser.runtime.sendMessage({
+                        chrome.runtime.sendMessage({
                             command: 'failed',
                             detail: e
                         });
@@ -303,7 +307,7 @@
             elements.commentsList = Array.from(elements.commentsList);
             elements.commentsList.shift();
 
-            browser.runtime.sendMessage({
+            chrome.runtime.sendMessage({
                 command: "loaded"
             });
 
@@ -332,7 +336,7 @@
 
         this.removeListener = () => {
             if (listener) {
-                browser.runtime.onMessage.removeListener(listener);
+                chrome.runtime.onMessage.removeListener(listener);
                 listener = null;
             }
         };
@@ -351,7 +355,7 @@
 
                     debugLog("sending comment,,,");
                     const comment = getComment(elements.currentCommentID);
-                    browser.runtime.sendMessage({
+                    chrome.runtime.sendMessage({
                         command: "chosen",
                         user: comment.user,
                         comment: comment.comment,
@@ -367,7 +371,7 @@
             }
 
             listener = handleGetRequest;
-            browser.runtime.onMessage.addListener(listener);
+            chrome.runtime.onMessage.addListener(listener);
         };
 
     };
@@ -392,7 +396,7 @@
 
         this.removeListener = () => {
             if (listener) {
-                browser.runtime.onMessage.removeListener(listener);
+                chrome.runtime.onMessage.removeListener(listener);
                 listener = null;
             }
         };
@@ -411,7 +415,7 @@
             }
 
             listener = handleDisplayRequest;
-            browser.runtime.onMessage.addListener(listener);
+            chrome.runtime.onMessage.addListener(listener);
         };
 
 
@@ -439,6 +443,4 @@
 
 
     let stateHandler = new StateHandler();
-    stateHandler.listenForStateRequest();
-
 }) ();
