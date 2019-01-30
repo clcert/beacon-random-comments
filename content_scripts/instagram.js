@@ -3,7 +3,6 @@
         return;
     }
     window.hasRun = true;
-    console.log("INJECTED!!");
 
     let elements = {
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
@@ -11,10 +10,26 @@
         commentsList: null,
         currentCommentID: 0,
         currentUrl: null,
-        debugging: true,
+        debugging: false,
         loadingGifURL: null,
         popupRequests: 0,
         seed: null
+    };
+
+
+    let drawJSON = {
+        host: null,
+        post_comment: null,
+        draw_date: null,
+        comments_number: null,
+        pulse_url: null,
+        post_url: null,
+        retries: 0,
+        selected_comment: {
+            user: null,
+            comment: null
+        },
+        comments: []
     };
 
 
@@ -55,13 +70,28 @@
 
     /**
      *
+     * @returns {{post_comment: string, host: string}}
+     */
+    function getHostComment() {
+        try {
+            const hostComment = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li")[0];
+            const host = hostComment.querySelector("div > div > div > h2 > a").textContent;
+            const post_comment = hostComment.querySelector("div > div > div > span").textContent;
+            return {host: host, post_comment: post_comment};
+        } catch (e) {
+            reportError(e);
+        }
+    }
+    
+    /**
+     *
      * @param i
      * @returns {{comment: string, user: string}}
      */
     function getComment(i) {
         if (elements.commentsList) {
-            const user = elements.commentsList[i].querySelector("div > div > div > h3 > a").innerHTML;
-            const comment = elements.commentsList[i].querySelector("div > div > div > span").innerHTML;
+            const user = elements.commentsList[i].querySelector("div > div > div > h3 > a").textContent;
+            const comment = elements.commentsList[i].querySelector("div > div > div > span").textContent;
             return {user: user, comment: comment};
         } else {
             return {user: "dummy", comment: "dummy"};
@@ -133,6 +163,7 @@
                         elements.currentUrl = message.url;
                     }
 
+                    drawJSON.post_url = message.url;
 
                     const comment = getComment(elements.currentCommentID);
                     chrome.runtime.sendMessage({
@@ -252,6 +283,10 @@
                 } else {
                     try {
                         elements.seed = JSON.parse(data).pulse.outputValue;
+
+                        // Saves pulse URI
+                        drawJSON.pulse_url = JSON.parse(data).pulse.uri;
+
                         debugLog("seed is", elements.seed);
                         Math.seedrandom(elements.seed);
                         handler.change(new CommentsLoader(handler));
@@ -303,9 +338,29 @@
         };
 
         let saveComments = () => {
+            let hostComment = getHostComment();
+            drawJSON.host = hostComment.host;
+            drawJSON.post_comment = hostComment.post_comment;
+
             elements.commentsList = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li");
             elements.commentsList = Array.from(elements.commentsList);
             elements.commentsList.shift();
+
+            // Remove host comments from comments list
+            for (let i = elements.commentsList.length-1; i >= 0; i--) {
+                const userComment = getComment(i);
+                if (userComment.user === hostComment.host) {
+                    elements.commentsList.splice(i, 1);
+                }
+            }
+
+            // Saves final comments number in drawJSON
+            drawJSON.comments_number = elements.commentsList.length;
+
+            // Saves comments in drawJSON
+            for (let i = 0; i < elements.commentsList.length; i++) {
+                drawJSON.comments.push(getComment(i));
+            }
 
             chrome.runtime.sendMessage({
                 command: "loaded"
@@ -366,6 +421,11 @@
 
                 } else if (message.command === "finish") {
                     self.removeListener();
+                    drawJSON.retries = elements.popupRequests;
+                    drawJSON.selected_comment = getComment(elements.currentCommentID);
+                    drawJSON.draw_date = new Date().toISOString();
+
+                    console.log(JSON.stringify(drawJSON));
                     handler.change(new Finished(handler));
                 }
             }
