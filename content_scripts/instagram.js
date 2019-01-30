@@ -424,7 +424,7 @@
             comment.scrollIntoView({
                 behavior: 'smooth'
             });
-            document.querySelector("main").scrollIntoView();
+            //document.querySelector("main").scrollIntoView();
         };
     };
 

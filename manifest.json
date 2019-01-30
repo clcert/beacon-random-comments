@@ -4,7 +4,7 @@
   "name": "Random Comments",
   "version": "1.0.3",
 
-  "description": "Adds a browser action icon to the toolbar. Click the load button to load all comments. Click the get comment to get a random comment." ,
+  "description": "Adds a browser action icon to the toolbar. Click the load button to load all comments. Click the get comment to get a random comment" ,
   "homepage_url": "https://github.com/clcert/beacon-random-comments",
   "icons": {
     "64": "assets/icons/dice-64.png"
@@ -25,6 +25,6 @@
   },
 
   "web_accessible_resources": [
-    "gif/loading.gif"
+    "assets/gif/loading.gif"
   ]
 }
