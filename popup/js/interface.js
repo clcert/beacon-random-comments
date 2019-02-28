@@ -6,7 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: false,
+    debugging: true,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
     main: document.getElementsByTagName("main")[0],
@@ -16,7 +16,7 @@ let elements = {
     shareBtn: document.getElementById("btn-share"),
     clipboardBtn: document.getElementById("btn-clipboard"),
     notReloadMsg: document.getElementById("not-reload-msg"),
-    attempts: document.getElementById("attempts"),
+    attempts: document.getElementById("attempts-number"),
     finishUser: document.getElementById("finish-user"),
     shareUser: document.getElementById("share-user"),
     gifURL: chrome.extension.getURL("assets/gif/loading.gif")
@@ -168,7 +168,7 @@ let StateHandler = function() {
                     elements.shareUser.innerHTML = message.user;
 
                     // Change attempts counter at Finish view
-                    elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
+                    elements.attempts.innerHTML = message.counter.toString();
                 }
 
                 if (message.state === "seed-requester" || message.state === "comments-loader") {
@@ -317,10 +317,10 @@ let LoadingComments = function(handler) {
                 removeLoadedListener();
             }
 
-            // TODO
-            // if (message.command === "failed") {
-
-            // }
+           // TODO
+            if (message.command === "failed") {
+                console.log("puta la wea fallo...");
+            }
         }
 
         function removeLoadedListener() {
@@ -392,7 +392,7 @@ let ChoosingComment = function(handler) {
                     elements.shareUser.innerHTML = message.user;
 
                     // Change attempts counter at Finish view
-                    elements.attempts.innerHTML = "Número de Intentos: " + message.counter.toString();
+                    elements.attempts.innerHTML = message.counter.toString();
 
                     $("#choosing-spinner").hide();
                     $("#choosing-check").show();
