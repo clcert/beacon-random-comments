@@ -6,7 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: true,
+    debugging: false,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
     main: document.getElementsByTagName("main")[0],
@@ -34,6 +34,15 @@ function debugLog() {
         }
         console.log(str);
     }
+}
+
+
+function insertCSS(str) {
+    let css = document.createElement("style");
+    css.type = "text/css";
+    css.innerHTML = str;
+    document.body.append(css);
+    debugLog("Inserted css");
 }
 
 /**
@@ -78,22 +87,28 @@ let StateHandler = function() {
     let currentState;
 
     this.init = () => {
-        let urlsPatterns = [
-            /^(https:\/\/www.instagram.com\/p\/)[A-Za-z0-9_]+\/$/i
+        let urlsInfo = [
+            {   name: "Instagram",
+                regex: /^(https:\/\/www.instagram.com\/p\/)[A-Za-z0-9_]+\/$/i,
+                script: "/content_scripts/instagram.js",
+                headerBg: chrome.extension.getURL("/popup/assets/images/instagram/background-header.jpg"),
+                footerBg: chrome.extension.getURL("/popup/assets/images/instagram/background-footer.jpg")
+            }
         ];
+
 
         let self = this;
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                 let currentURL = tabs[0].url;
-                let isValidURL = false;
-                for (let i = 0; i < urlsPatterns.length; i++) {
-                    if (urlsPatterns[i].test(currentURL)) {
-                        isValidURL = true;
+                let currentSiteInfo = null;
+                for (let i = 0; i < urlsInfo.length; i++    ) {
+                    if (urlsInfo[i].regex.test(currentURL)) {
+                        currentSiteInfo = urlsInfo[i];
                         break;
                     }
                 }
 
-                if (isValidURL) {
+                if (currentSiteInfo) {
                     debugLog("valid url");
                     /*
                         Every time the popup is opened it executes the corresponding content script. If the content script has been
@@ -101,15 +116,22 @@ let StateHandler = function() {
                     */
                     debugLog("executing script...");
                     chrome.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
-                    chrome.tabs.executeScript({file: "/content_scripts/instagram.js"}, () => {
+
+
+                    // Executes current site script
+                    chrome.tabs.executeScript({file: currentSiteInfo.script}, () => {
                         try {
                             requestState(self);
                         } catch (e) {
                             reportError(e);
                         }
                     });
+
+                    document.getElementsByTagName("header")[0].style.backgroundImage = "url(" + currentSiteInfo.headerBg + ")";
+                    document.getElementsByTagName("footer")[0].style.backgroundImage = "url(" + currentSiteInfo.footerBg + ")";
                 } else {
                     debugLog("invalid url");
+                    console.log(document.getElementsByTagName("header")[0]);
                     try {
                         $(document).ready(function() {
                             $("#error-modal").modal({dismissible: false});
@@ -118,7 +140,6 @@ let StateHandler = function() {
                     } catch (e) {
                         console.error(e);
                     }
-
 
                 }
             });

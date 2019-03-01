@@ -10,7 +10,7 @@
         commentsList: null,
         currentCommentID: 0,
         currentUrl: null,
-        debugging: true,
+        debugging: false,
         loadingGifURL: null,
         popupRequests: 0,
         seed: null

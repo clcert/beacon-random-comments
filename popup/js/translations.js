@@ -2,7 +2,7 @@
 i18next
     .use(i18nextBrowserLanguageDetector)
     .init({
-    debug: true,
+    debug: false,
     resources: {
         en: {
             translation: {
@@ -34,7 +34,7 @@ i18next
                 // Instructions translations
                 "choose-instructions": "Click \"Start Draw\" to randomly choose a comment",
                 "finish-instructions": "Click \"Finish\" to finish the draw or \"Retry\" to choose a new comment.",
-                "share-instructions": "Use this <a>link</a> to ensure to your followers the draw was <b>random</b>, <b>transparent</b> y <b>verifiable</b>.\n" +
+                "share-instructions": "Use this <a>link</a> to ensure to your followers the draw was <b>random</b>, <b>transparent</b> and <b>verifiable</b>.\n" +
                     "<span>You can share it with </span><i class=\"material-icons tiny\">share</i> <span> or copy to the clipboard </span><i class=\"material-icons tiny\">content_copy</i>",
 
                 // Share modal translations
