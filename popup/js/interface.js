@@ -7,6 +7,7 @@
  */
 let elements = {
     debugging: false,
+    verificationURL: null,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
     main: document.getElementsByTagName("main")[0],
@@ -131,7 +132,7 @@ let StateHandler = function() {
                     document.getElementsByTagName("footer")[0].style.backgroundImage = "url(" + currentSiteInfo.footerBg + ")";
                 } else {
                     debugLog("invalid url");
-                    console.log(document.getElementsByTagName("header")[0]);
+                    //console.log(document.getElementsByTagName("header")[0]);
                     try {
                         $(document).ready(function() {
                             $("#error-modal").modal({dismissible: false});
@@ -340,7 +341,7 @@ let LoadingComments = function(handler) {
 
            // TODO
             if (message.command === "failed") {
-                console.log("puta la wea fallo...");
+                debugLog("failed...");
             }
         }
 
@@ -473,7 +474,7 @@ let Finish = function(handler) {
         if (!elements.finishBtn.hasEventListener) {
             elements.finishBtn.hasEventListener = true;
             elements.finishBtn.addEventListener("click", function() {
-                handler.change(new Share(handler));
+                handler.change(new VerificatioURLWaiter(handler));
                 sendFinishMessage();
             });
         }
@@ -498,6 +499,34 @@ let Finish = function(handler) {
 };
 
 
+let VerificatioURLWaiter = function(handler) {
+    this.handler = handler;
+    this.init = () => {
+        $("#loading-modal").modal({dismissible: false});
+        $("#loading-modal").modal("open");
+        listenVeriticationURL();
+    };
+
+    let listenVeriticationURL = () => {
+        function handleVeriticationURLResponse(message) {
+            if (message.command === "verification") {
+                elements.verificationURL = message.url;
+                document.getElementById("verification-link").setAttribute("href", elements.verificationURL);
+                $("#loading-modal").modal("close");
+                handler.change(new Share(handler));
+                removeHandler();
+            }
+        }
+
+        function removeHandler() {
+            chrome.runtime.onMessage.removeListener(handleVeriticationURLResponse);
+        }
+
+        chrome.runtime.onMessage.addListener(handleVeriticationURLResponse);
+    };
+};
+
+
 /**
  *
  * @param handler
@@ -515,7 +544,7 @@ let Share = function(handler) {
             elements.clipboardBtn.addEventListener("click", function() {
                 M.toast({html: "Link copiado al portapapeles" , classes: "rounded"});
                 const el = document.createElement('textarea');
-                el.value = "random.uchile.cl";
+                el.value = elements.verificationURL;
                 document.body.appendChild(el);
                 el.select();
                 document.execCommand('copy');

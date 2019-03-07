@@ -34,11 +34,15 @@ i18next
                 // Instructions translations
                 "choose-instructions": "Click \"Start Draw\" to randomly choose a comment",
                 "finish-instructions": "Click \"Finish\" to finish the draw or \"Retry\" to choose a new comment.",
-                "share-instructions": "Use this <a>link</a> to ensure to your followers the draw was <b>random</b>, <b>transparent</b> and <b>verifiable</b>.\n" +
+                "share-instructions": "Use this <a id='verification-link'>link</a> to ensure to your followers the draw was <b>random</b>, <b>transparent</b> and <b>verifiable</b>.\n" +
                     "<span>You can share it with </span><i class=\"material-icons tiny\">share</i> <span> or copy to the clipboard </span><i class=\"material-icons tiny\">content_copy</i>",
 
                 // Share modal translations
                 "share-title": "Share",
+
+                // Loading Modal translations
+                "loading-title": "Generating Verification Link",
+
 
                 // Error modal translations
                 "error-title": "Oops, an error has occurred",
@@ -75,11 +79,14 @@ i18next
                 // Instructions translations
                 "choose-instructions": "Haz click en \"Iniciar Sorteo\" para escoger un comentario aleatoriamente.",
                 "finish-instructions": "Haz click en \"Terminar\" para finalizar el sorteo o \"Reintentar\" para elegir un nuevo comentario.",
-                "share-instructions": "Utiliza este <a>link</a> para asegurar a tus seguidores que el concurso fue <b>aleatorio</b>, <b>transparente</b> y <b>verificable</b>.\n" +
+                "share-instructions": "Utiliza este <a id='verification-link'>link</a> para asegurar a tus seguidores que el concurso fue <b>aleatorio</b>, <b>transparente</b> y <b>verificable</b>.\n" +
                     "<span>Puedes compartirlo con </span><i class=\"material-icons tiny\">share</i> <span> o copiarlo con </span><i class=\"material-icons tiny\">content_copy</i>",
 
                 // Share modal translations
                 "share-title": "Compartir",
+
+                // Loading Modal translations
+                "loading-title": "Generando Link de Verificación",
 
                 // Error modal translations
                 "error-title": "Oops, ha ocurrido un error",
@@ -120,6 +127,9 @@ i18next
 
         // Share modal translations
         document.getElementById("share-title").innerText = i18next.t("share-title");
+
+        // Loading modal translations
+        document.getElementById("loading-title").innerText = i18next.t("loading-title");
 
         // Error modal translations
         document.getElementById("error-title").innerText = i18next.t("error-title");

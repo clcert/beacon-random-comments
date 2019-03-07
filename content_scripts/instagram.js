@@ -6,6 +6,8 @@
 
     let elements = {
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
+        serverURL: "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com:5000/",
+        verificationURL: null,
         commentsDiv: null,
         commentsList: null,
         currentCommentID: 0,
@@ -14,6 +16,7 @@
         loadingGifURL: null,
         popupRequests: 0,
         seed: null
+
     };
 
 
@@ -425,7 +428,7 @@
                     drawJSON.selected_comment = getComment(elements.currentCommentID);
                     drawJSON.draw_date = new Date().toISOString();
 
-                    console.log(JSON.stringify(drawJSON));
+                    debugLog(JSON.stringify(drawJSON));
                     handler.change(new Finished(handler));
                 }
             }
@@ -492,13 +495,33 @@
     let Finished = function(handler) {
         this.handler = handler;
 
-        this.init = () => {};
+        this.init = () => {
+            sendWinnerJSON();
+        };
 
         this.getName = () => {
             return "finished";
         };
 
         this.removeListener = () => {};
+
+        let sendWinnerJSON = function() {
+            debugLog("sending winner to server...");
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", elements.serverURL, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    debugLog("received URL by server");
+                    elements.verificationURL = xhr.responseText;
+                    chrome.runtime.sendMessage({
+                        command: "verification",
+                        url: elements.verificationURL
+                    });
+                }
+            };
+            xhr.send(JSON.stringify(drawJSON));
+        }
     };
 
 

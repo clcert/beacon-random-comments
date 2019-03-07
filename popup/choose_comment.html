@@ -3,220 +3,240 @@
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link rel="stylesheet" href="css/materialize.min.css"/>
-	<link rel="stylesheet" href="css/choose_comment.css"/>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/materialize.min.css"/>
+    <link rel="stylesheet" href="css/choose_comment.css"/>
 </head>
 <body>
-		<header class="center-align">
-			<h1 class="title white-text">Random Comments</h1>
-		</header>
-		
-		<main>			
-			<ul id="menu" class="collapsible">
-				<li id="choose-tab" class="active">
-					<div class="collapsible-header"><span class="enum-unicode">&#10102;</span><span id="choose-tab-title"></span></div>
-				  	<div class="collapsible-body">
-				  	
-				  		<div id="welcome" class="row">
-							<div class="col s12 justify-text">
-								<h2 id="welcome-title" class="mt-1 center-align"></h2>
-								<span id="welcome-paragraph"></span>
-								<br>
-								<br>
-							</div>
-							<div class="col s12 center-align">
-								<a id="btn-start" class="btn-small btn-flat bold-text blue"></a>
-							</div>
-						</div>
+<header class="center-align">
+    <h1 class="title white-text">Random Comments</h1>
+</header>
 
-						<div id="loading-choosing">
-							<div id="loading-row" class="row">
-								<div class="col s1 mt-1"></div>
-								<div class="col s8 mt-1">
+<main>
+    <ul id="menu" class="collapsible">
+        <li id="choose-tab" class="active">
+            <div class="collapsible-header"><span class="enum-unicode">&#10102;</span><span id="choose-tab-title"></span></div>
+            <div class="collapsible-body">
+
+                <div id="welcome" class="row">
+                    <div class="col s12 justify-text">
+                        <h2 id="welcome-title" class="mt-1 center-align"></h2>
+                        <span id="welcome-paragraph"></span>
+                        <br>
+                        <br>
+                    </div>
+                    <div class="col s12 center-align">
+                        <a id="btn-start" class="btn-small btn-flat bold-text blue"></a>
+                    </div>
+                </div>
+
+                <div id="loading-choosing">
+                    <div id="loading-row" class="row">
+                        <div class="col s1 mt-1"></div>
+                        <div class="col s8 mt-1">
 									<span id="loading-span"><span>
-								</div>
-								<div class="col s3 mt-1">
-									<i id="loading-check" class="material-icons green-text left loading-check">check</i>
-									<div id="loading-spinner" class="preloader-wrapper super-small active">
-										<div class="spinner-layer spinner-green-only">
-										  	<div class="circle-clipper left">
-										    	<div class="circle"></div>
-										  	</div><div class="gap-patch">
-										    	<div class="circle"></div>
-										  	</div><div class="circle-clipper right">
-										    	<div class="circle"></div>
-										  	</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							
+                        </div>
+                        <div class="col s3 mt-1">
+                            <i id="loading-check" class="material-icons green-text left loading-check">check</i>
+                            <div id="loading-spinner" class="preloader-wrapper super-small active">
+                                <div class="spinner-layer spinner-green-only">
+                                    <div class="circle-clipper left">
+                                        <div class="circle"></div>
+                                    </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-							<div id="choosing-row" class="row">
-								<div class="col s1"></div>
-								<div class="col s8">
-									<span id="choosing-span"></span>
-								</div>
-								<div class="col s3">
-									<i id="choosing-check" class="material-icons green-text left loading-check">check</i>
-									<div id="choosing-spinner" class="preloader-wrapper super-small active">
-										<div class="spinner-layer spinner-green-only">
-										  	<div class="circle-clipper left">
-										    	<div class="circle"></div>
-										  	</div><div class="gap-patch">
-										    	<div class="circle"></div>
-										  	</div><div class="circle-clipper right">
-										    	<div class="circle"></div>
-										  	</div>
-										</div>
-									</div>
-								</div>
-							</div>
 
-							<div class="row">
-								<div class="col s12 mt-1 bold-text">
-									<span id="not-reload-msg" class="ml-1"></span>
-								</div>
-							</div>
-						</div>
+                    <div id="choosing-row" class="row">
+                        <div class="col s1"></div>
+                        <div class="col s8">
+                            <span id="choosing-span"></span>
+                        </div>
+                        <div class="col s3">
+                            <i id="choosing-check" class="material-icons green-text left loading-check">check</i>
+                            <div id="choosing-spinner" class="preloader-wrapper super-small active">
+                                <div class="spinner-layer spinner-green-only">
+                                    <div class="circle-clipper left">
+                                        <div class="circle"></div>
+                                    </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-						<div class="row border-dashed white ml-1 mr-1">
-							<div id="choose-instructions" class="col s10 justify-text"></div>
-							<div class="col s2">
-								<i class="material-icons blue-text">info</i>
-							</div>
-						</div>
-						
+                    <div class="row">
+                        <div class="col s12 mt-1 bold-text">
+                            <span id="not-reload-msg" class="ml-1"></span>
+                        </div>
+                    </div>
+                </div>
 
-				  	</div>
-				</li>
-				<li id="finish-tab">
-					<div class="collapsible-header"><span class="enum-unicode">&#10103;</span> <span id="finish-tab-title"></span></div>
-				  	<div class="collapsible-body">
-				  		
-				  		<div id="choosing" class="row">
-							<div class="col s1 mt-1"></div>
-							<div class="col s10 border-black white mt-1">
-								<span id="finish-chosen-user"></span>
-								<br>
-								<center><b id="finish-user">user6</b></center>
-							</div>
-							<div class="col s1 mt-1"></div>
+                <div class="row border-dashed white ml-1 mr-1">
+                    <div id="choose-instructions" class="col s10 justify-text"></div>
+                    <div class="col s2">
+                        <i class="material-icons blue-text">info</i>
+                    </div>
+                </div>
 
-							<div class="col s10">
-								<span id="attempts-text" class="right mt-1"></span>
-							</div>
-							<div class="col s2">
-								<span class="left mt-1" id="attempts-number"></span>
-							</div>
 
-							<div class="col s6">
-								<a id="btn-retry" class="btn-small btn-flat bold-text blue ml-1 right"></a>
-							</div>
-							<div class="col s6">
-								<a id="btn-finish" class="btn-small btn-flat bold-text blue mr-1 left"></a>
-							</div>
-						</div>
+            </div>
+        </li>
+        <li id="finish-tab">
+            <div class="collapsible-header"><span class="enum-unicode">&#10103;</span> <span id="finish-tab-title"></span></div>
+            <div class="collapsible-body">
 
-						<div class="row border-dashed white ml-1 mr-1">
-							<div id="finish-instructions" class="col s10"></div>
-							<div class="col s2">
-								<i class="material-icons blue-text">info</i>
-							</div>
-						</div>
-				  	</div>
-				</li>
-				<li id="share-tab">
-					<div class="collapsible-header"><i class="material-icons black-text">share</i><span id="share-tab-title"></span></div>
-				  	<div class="collapsible-body">
-				  		
-				  		<div id="sharing" class="row pt-1">
-							<div class="col s8">
-								<span id="sharing-draw-info"></span>
-								<div class="border-black white pl-1 pr-1 pt-03">
-									<span id="sharing-draw-winner-intro"></span>
-									<br>
-									<center><b id="share-user"></b></center>
-								</div>
-							</div>
-							<div class="col s4">
-								<img src="assets/images/canvas.png" alt="qr-code">
-							</div>
-						</div>
-						<div class="row border-dashed white ml-1 mr-1">
-							<div id="share-instructions" class="col s10 justify-text"></div>
-							<div class="col s2">
-								<i class="material-icons blue-text">info</i>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s6">
-								<a id="btn-share" href="#share-modal" class="btn-small btn-flat modal-trigger blue right"><i class="material-icons">share</i></a>
-							</div>
-							<div class="col s6">
-								<a id="btn-clipboard" class="btn-small btn-flat blue left"><i class="material-icons">content_copy</i></a>
-							</div>
-						</div>
-						
-				  	</div>
-				</li>
-			</ul>
+                <div id="choosing" class="row">
+                    <div class="col s1 mt-1"></div>
+                    <div class="col s10 border-black white mt-1">
+                        <span id="finish-chosen-user"></span>
+                        <br>
+                        <center><b id="finish-user">user6</b></center>
+                    </div>
+                    <div class="col s1 mt-1"></div>
 
-			<div id="share-modal" class="modal">
-			    <div class="modal-content">
-			      	<h4 id="share-title" class="center-align"></h4>
-			      	<div class="row">
-			      		<div class="col s4">
-			      			<div class="card">
-			      				<div id="share-twitter" class="card-content">
-			      				</div>
-			      			</div>
-			      		</div>
-			      		<div class="col s4">
-			      			<div class="card">
-			      				<div id="share-facebook" class="card-content">
-			      				</div>
-			      			</div>
-			      		</div>
-			      		<div class="col s4">
-			      			<div class="card">
-			      				<div id="share-telegram" class="card-content">
-			      				</div>
-			      			</div>
-			      		</div>
-			      	</div>
-			    </div>
-		  	</div>
+                    <div class="col s10">
+                        <span id="attempts-text" class="right mt-1"></span>
+                    </div>
+                    <div class="col s2">
+                        <span class="left mt-1" id="attempts-number"></span>
+                    </div>
 
-			<div id="error-modal" class="modal">
-				<div class="modal-content">
-					<h5 id="error-title" class="center-align"></h5>
-					<p id="error-paragraph"></p>
-				</div>
-			</div>
-		</main>
+                    <div class="col s6">
+                        <a id="btn-retry" class="btn-small btn-flat bold-text blue ml-1 right"></a>
+                    </div>
+                    <div class="col s6">
+                        <a id="btn-finish" class="btn-small btn-flat bold-text blue mr-1 left"></a>
+                    </div>
+                </div>
 
-		<footer class="page-footer pt-03 white">
-				<div class="row mb-0 pb-1 black-text">
-					<div class="col s6">
-						<img src="assets/images/logoblanco.png" class="mt-2 center" alt="random-uchile">
-					</div>
-					<div class="col s6 logo-uchile center">
-						<img src="assets/images/logouchile.png" alt="universidad-de-chile">
-					</div>
-				</div>
-		</footer>
+                <div class="row border-dashed white ml-1 mr-1">
+                    <div id="finish-instructions" class="col s10"></div>
+                    <div class="col s2">
+                        <i class="material-icons blue-text">info</i>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li id="share-tab">
+            <div class="collapsible-header"><i class="material-icons black-text">share</i><span id="share-tab-title"></span></div>
+            <div class="collapsible-body">
 
-	<script src="js/jquery-3.3.1.min.js"></script>
-	<script src="js/materialize.min.js"></script>
-	<script src="js/i18next.min.js"></script>
-	<script src="js/i18nextBrowserLanguageDetector.min.js"></script>
+                <div id="sharing" class="row pt-1">
+                    <div class="col s8">
+                        <span id="sharing-draw-info"></span>
+                        <div class="border-black white pl-1 pr-1 pt-03">
+                            <span id="sharing-draw-winner-intro"></span>
+                            <br>
+                            <center><b id="share-user"></b></center>
+                        </div>
+                    </div>
+                    <div class="col s4">
+                        <img src="assets/images/canvas.png" alt="qr-code">
+                    </div>
+                </div>
+                <div class="row border-dashed white ml-1 mr-1">
+                    <div id="share-instructions" class="col s10 justify-text"></div>
+                    <div class="col s2">
+                        <i class="material-icons blue-text">info</i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <a id="btn-share" href="#share-modal" class="btn-small btn-flat modal-trigger blue right"><i class="material-icons">share</i></a>
+                    </div>
+                    <div class="col s6">
+                        <a id="btn-clipboard" class="btn-small btn-flat blue left"><i class="material-icons">content_copy</i></a>
+                    </div>
+                </div>
 
-	<script src="js/choose_comment.js"></script>
-	<script src="js/interface.js"></script>
-	<script src="js/translations.js"></script>
+            </div>
+        </li>
+    </ul>
+
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <h4 id="share-title" class="center-align"></h4>
+            <div class="row">
+                <div class="col s4">
+                    <div class="card">
+                        <div id="share-twitter" class="card-content">
+                        </div>
+                    </div>
+                </div>
+                <div class="col s4">
+                    <div class="card">
+                        <div id="share-facebook" class="card-content">
+                        </div>
+                    </div>
+                </div>
+                <div class="col s4">
+                    <div class="card">
+                        <div id="share-telegram" class="card-content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="loading-modal" class="modal">
+        <div class="modal-content">
+            <h5 id="loading-title" class="center-align"></h5>
+            <div class="preloader-wrapper small active center">
+                <div class="spinner-layer spinner-gray-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="error-modal" class="modal">
+        <div class="modal-content">
+            <h5 id="error-title" class="center-align"></h5>
+            <p id="error-paragraph"></p>
+        </div>
+    </div>
+</main>
+
+<footer class="page-footer pt-03 white">
+    <div class="row mb-0 pb-1 black-text">
+        <div class="col s6">
+            <img src="assets/images/logoblanco.png" class="mt-2 center" alt="random-uchile">
+        </div>
+        <div class="col s6 logo-uchile center">
+            <img src="assets/images/logouchile.png" alt="universidad-de-chile">
+        </div>
+    </div>
+</footer>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/materialize.min.js"></script>
+<script src="js/i18next.min.js"></script>
+<script src="js/i18nextBrowserLanguageDetector.min.js"></script>
+
+<script src="js/choose_comment.js"></script>
+<script src="js/interface.js"></script>
+<script src="js/translations.js"></script>
 </body>
 
 </html>
