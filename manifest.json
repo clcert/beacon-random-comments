@@ -2,12 +2,13 @@
 
   "manifest_version": 2,
   "name": "Random Comments",
-  "version": "1.0.4",
+  "short_name": "Random Comments",
+  "version": "1.0.6",
 
-  "description": "Adds a browser action icon to the toolbar. Click the load button to load all comments. Click the get comment to get a random comment" ,
+  "description": "Picks a comment, from an Instagram post, completely at random using the service provided by Random UChile." ,
   "homepage_url": "https://github.com/clcert/beacon-random-comments",
   "icons": {
-    "64": "assets/icons/dice-64.png"
+    "128": "assets/icons/dice-128.png"
   },
 
   "permissions": [
@@ -18,7 +19,7 @@
   ],
 
   "browser_action": {
-    "default_icon": "assets/icons/dice-64.png",
+    "default_icon": "assets/icons/dice-128.png",
     "default_title": "Random Comments",
     "default_popup": "popup/choose_comment.html"
   },
