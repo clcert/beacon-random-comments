@@ -6,7 +6,7 @@
 
     let elements = {
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
-        serverURL: "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com:5000/",
+        serverURL: "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com/",
         verificationURL: null,
         commentsDiv: null,
         commentsList: null,
@@ -45,7 +45,7 @@
                     str += " ";
                 }
             }
-            console.log(str);
+                console.log(str);
         }
     }
 
