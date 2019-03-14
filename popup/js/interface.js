@@ -6,7 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: false,
+    debugging: true,
     verificationURL: null,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
@@ -248,7 +248,12 @@ let StateHandler = function() {
                         sendDisplayMessage();
                         break;
 
+                    case "json-winner-request":
+                        currentState = new verificationURLWaiter(handler);
+                        break;
                     case "finished":
+                        elements.verificationURL = message.url;
+                        document.getElementById("verification-link").setAttribute("href", elements.verificationURL);
                         currentState = new Share(handler);
                 }
 
@@ -474,7 +479,7 @@ let Finish = function(handler) {
         if (!elements.finishBtn.hasEventListener) {
             elements.finishBtn.hasEventListener = true;
             elements.finishBtn.addEventListener("click", function() {
-                handler.change(new VerificatioURLWaiter(handler));
+                handler.change(new verificationURLWaiter(handler));
                 sendFinishMessage();
             });
         }
@@ -499,15 +504,16 @@ let Finish = function(handler) {
 };
 
 
-let VerificatioURLWaiter = function(handler) {
+let verificationURLWaiter = function(handler) {
     this.handler = handler;
     this.init = () => {
+        $("#menu").collapsible("open", 1);
         $("#loading-modal").modal({dismissible: false});
         $("#loading-modal").modal("open");
-        listenVeriticationURL();
+        listenVerificationURL();
     };
 
-    let listenVeriticationURL = () => {
+    let listenVerificationURL = () => {
         function handleVeriticationURLResponse(message) {
             if (message.command === "verification") {
                 elements.verificationURL = message.url;

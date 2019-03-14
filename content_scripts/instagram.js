@@ -5,6 +5,7 @@
     window.hasRun = true;
 
     let elements = {
+        debugging: true,
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
         serverURL: "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com/",
         verificationURL: null,
@@ -12,7 +13,6 @@
         commentsList: null,
         currentCommentID: 0,
         currentUrl: null,
-        debugging: false,
         loadingGifURL: null,
         popupRequests: 0,
         seed: null
@@ -174,7 +174,8 @@
                         state: getStateName(),
                         user: comment.user,
                         comment: comment.comment,
-                        counter: elements.popupRequests
+                        counter: elements.popupRequests,
+                        url: elements.verificationURL
                     });
                     debugLog("sent state", getStateName());
                 }
@@ -429,7 +430,7 @@
                     drawJSON.draw_date = new Date().toISOString();
 
                     debugLog(JSON.stringify(drawJSON));
-                    handler.change(new Finished(handler));
+                    handler.change(new WinnerSender(handler));
                 }
             }
 
@@ -492,7 +493,7 @@
     };
 
 
-    let Finished = function(handler) {
+    let WinnerSender = function(handler) {
         this.handler = handler;
 
         this.init = () => {
@@ -500,7 +501,7 @@
         };
 
         this.getName = () => {
-            return "finished";
+            return "json-winner-request";
         };
 
         this.removeListener = () => {};
@@ -514,13 +515,33 @@
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     debugLog("received URL by server");
                     elements.verificationURL = xhr.responseText;
-                    chrome.runtime.sendMessage({
-                        command: "verification",
-                        url: elements.verificationURL
-                    });
+
+                    handler.change(new Finished(handler));
                 }
             };
             xhr.send(JSON.stringify(drawJSON));
+        };
+    };
+
+
+    let Finished = function(handler) {
+        this.handler = handler;
+
+        this.init = () => {
+            sendWinnerURL();
+        };
+
+        this.getName = () => {
+            return "finished";
+        };
+
+        this.removeListener = () => {};
+
+        let sendWinnerURL = () => {
+            chrome.runtime.sendMessage({
+                command: "verification",
+                url: elements.verificationURL
+            });
         }
     };
 
