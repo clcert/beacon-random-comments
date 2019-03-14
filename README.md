@@ -23,5 +23,5 @@ Por el momento solo tenemos soporte para **Instagram**, pero pronto agregaremos 
 
 ## Obtener la última versión:
 A continuación se muestran la lista de navegadores en los que puedes utilizar nuestra extensión:
-* Firefox ([link](https://addons.mozilla.org/en-US/firefox/addon/random-comments-uchile/ "Descargar extensión para Mozilla Firefox"))
-* Chrome ([link](https://chrome.google.com/webstore/detail/random-comments/hdekiadgbjgdfelanobdgkpglladeajf))
+* Firefox ([link](https://addons.mozilla.org/en-US/firefox/addon/random-comments-uchile/ "Descargar extensión para Mozilla Firefox"){:target="_blank"})
+* Chrome ([link](https://chrome.google.com/webstore/detail/random-comments/hdekiadgbjgdfelanobdgkpglladeajf){:target="_blank"})
