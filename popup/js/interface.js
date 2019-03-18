@@ -117,7 +117,7 @@ let StateHandler = function() {
                     */
                     debugLog("executing script...");
                     chrome.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
-
+                    chrome.tabs.executeScript({file: "/content_scripts/interface.js"});
 
                     // Executes current site script
                     chrome.tabs.executeScript({file: currentSiteInfo.script}, () => {
@@ -143,6 +143,8 @@ let StateHandler = function() {
                     }
 
                 }
+
+
             });
 
 
@@ -517,7 +519,15 @@ let verificationURLWaiter = function(handler) {
         function handleVeriticationURLResponse(message) {
             if (message.command === "verification") {
                 elements.verificationURL = message.url;
-                document.getElementById("verification-link").setAttribute("href", elements.verificationURL);
+                document.getElementById("verification-link").onclick(() => {
+                chrome.tabs.create({
+                       url: elements.verificationURL
+                    });
+
+
+                });
+
+                //document.getElementById("verification-link").setAttribute("href", elements.verificationURL);
                 $("#loading-modal").modal("close");
                 handler.change(new Share(handler));
                 removeHandler();
