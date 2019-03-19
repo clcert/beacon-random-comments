@@ -6,7 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: true,
+    debugging: false,
     verificationURL: null,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
@@ -416,6 +416,7 @@ let ChoosingComment = function(handler) {
                 window.setTimeout(() => {
                     removeHandler();
 
+                    debugLog("received user", message.user);
                     // Change chosen user at Finish and Share views
                     elements.finishUser.innerHTML = message.user;
                     elements.shareUser.innerHTML = message.user;
@@ -440,6 +441,7 @@ let ChoosingComment = function(handler) {
 
     let sendDisplayMessage = () => {
         function displayComment(tabs) {
+            debugLog("sending display order...");
             chrome.tabs.sendMessage(tabs[0].id, {
                 command: "display"
             });
@@ -516,16 +518,18 @@ let verificationURLWaiter = function(handler) {
     };
 
     let listenVerificationURL = () => {
+        debugLog("listening for verification url");
         function handleVeriticationURLResponse(message) {
             if (message.command === "verification") {
+                debugLog("verification url received: ", message.url);
                 elements.verificationURL = message.url;
-                document.getElementById("verification-link").onclick(() => {
-                chrome.tabs.create({
-                       url: elements.verificationURL
+
+                document.getElementById("verification-link").onclick = () => {
+                    chrome.tabs.create({
+                        url: elements.verificationURL
                     });
 
-
-                });
+                };
 
                 //document.getElementById("verification-link").setAttribute("href", elements.verificationURL);
                 $("#loading-modal").modal("close");
