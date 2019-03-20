@@ -1,4 +1,5 @@
 # Build Files
+build/*
 web-ext-artifacts/*
 
 # Log File

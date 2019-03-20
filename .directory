@@ -1,2 +1,9 @@
 [Desktop Entry]
 Icon=folder-script
+
+[Dolphin]
+Timestamp=2019,3,20,8,44,22
+Version=4
+
+[Settings]
+HiddenFilesShown=true
