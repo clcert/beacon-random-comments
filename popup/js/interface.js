@@ -6,7 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: false,
+    debugging: true,
     verificationURL: null,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
@@ -90,7 +90,7 @@ let StateHandler = function() {
     this.init = () => {
         let urlsInfo = [
             {   name: "Instagram",
-                regex: /^(https:\/\/www.instagram.com\/p\/)[A-Za-z0-9_]+\/$/i,
+                regex: /^(https:\/\/www.instagram.com\/p\/)[A-Za-z0-9_\-]+\/$/,
                 script: "/content_scripts/instagram.js",
                 headerBg: chrome.extension.getURL("/popup/assets/images/instagram/background-header.jpg"),
                 footerBg: chrome.extension.getURL("/popup/assets/images/instagram/background-footer.jpg")
@@ -131,7 +131,7 @@ let StateHandler = function() {
                     document.getElementsByTagName("header")[0].style.backgroundImage = "url(" + currentSiteInfo.headerBg + ")";
                     document.getElementsByTagName("footer")[0].style.backgroundImage = "url(" + currentSiteInfo.footerBg + ")";
                 } else {
-                    debugLog("invalid url");
+                    debugLog("invalid url", currentURL);
                     //console.log(document.getElementsByTagName("header")[0]);
                     try {
                         $(document).ready(function() {
