@@ -5,7 +5,7 @@
     window.hasRun = true;
 
     let elements = {
-        debugging: false,
+        debugging: true,
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
         serverURL: "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com/",
         verificationURL: null,
@@ -213,34 +213,39 @@
         };
 
         let requestSeed = () => {
-            requestToURL(elements.beaconURL, (err, data) => {
-                debugLog("received request...");
-                if (err) {
-                    console.error(err);
-                    chrome.runtime.sendMessage({
-                        command: "failed",
-                        detail: err
-                    });
-                    
-                } else {
-                    try {
-                        elements.seed = JSON.parse(data).pulse.outputValue;
-
-                        // Saves pulse URI
-                        drawJSON.pulse_url = JSON.parse(data).pulse.uri;
-
-                        debugLog("seed is", elements.seed);
-                        Math.seedrandom(elements.seed);
-                        handler.change(new CommentsLoader(handler));
-                    } catch (e) {
-                        console.error(e);
+            try {
+                debugLog("inside requestSeed function");
+                requestToURL(elements.beaconURL, (err, data) => {
+                    debugLog("received Beacon response...");
+                    if (err) {
+                        console.error(err);
                         chrome.runtime.sendMessage({
-                            command: 'failed',
-                            detail: e
+                            command: "failed",
+                            detail: err
                         });
+
+                    } else {
+                        try {
+                            elements.seed = JSON.parse(data).pulse.outputValue;
+
+                            // Saves pulse URI
+                            drawJSON.pulse_url = JSON.parse(data).pulse.uri;
+
+                            debugLog("seed is", elements.seed);
+                            Math.seedrandom(elements.seed);
+                            handler.change(new CommentsLoader(handler));
+                        } catch (e) {
+                            console.error(e);
+                            chrome.runtime.sendMessage({
+                                command: 'failed',
+                                detail: e
+                            });
+                        }
                     }
-                }
-            });
+                });
+            } catch (err) {
+                console.log(err);
+            }
         };
     };
 
