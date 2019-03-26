@@ -6,7 +6,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: true,
+    debugging: false,
     verificationURL: null,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
