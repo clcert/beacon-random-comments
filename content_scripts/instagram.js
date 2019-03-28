@@ -13,6 +13,10 @@ function debugLog() {
     }
 }
 
+function clickToLoadComments() {
+    document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
+}
+
 /**
  *
  * @returns {{post_comment: string, host: string}}
@@ -34,16 +38,43 @@ function getHostComment() {
  * @returns {{comment: string, user: string}}
  */
 function getComment(i) {
-    if (elements.commentsList) {
-        const user = elements.commentsList[i].querySelector("div > div > div > h3 > a").textContent;
-        const comment = elements.commentsList[i].querySelector("div > div > div > span").textContent;
-        return {user: user, comment: comment};
-    } else {
-        return {user: "dummy", comment: "dummy"};
-    }
+
+    const user = elements.commentsList[i].querySelector("div > div > div > h3 > a").textContent;
+    const comment = elements.commentsList[i].querySelector("div > div > div > span").textContent;
+    return {user: user, comment: comment};
 
 }
 
+
+function getAllComments() {
+        return new Promise((resolve, reject) => {
+            try {
+                const hostComment = getHostComment();
+
+                let allComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li");
+                allComments = Array.from(allComments);
+
+                let indices = [];
+                for (let i = 0; i < allComments.length; i++) {
+                    const currComment = getComment(i);
+                    if (currComment.user !== hostComment.host) {
+                        indices.push(i);
+                    }
+                }
+
+                let ans = {indices: indices, DOM: [], parsed: []};
+                for (let i = 0; i < indices.length; i++) {
+                    ans.DOM.push(allComments[indices[i]]);
+                    ans.parsed.push(getComment(indices[i]));
+                }
+
+                debugLog("getting all comments!!!!!!!!!!!");
+                resolve(ans);
+            } catch (e) {
+                reject(e);
+            }
+        });
+}
 
 /**
  *

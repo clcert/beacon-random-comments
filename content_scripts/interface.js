@@ -273,7 +273,7 @@
         let loadComments = () => {
             function clicker() {
                 try {
-                    document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
+                    clickToLoadComments();
                 } catch(err) {
                     debugLog("loaded comments...");
                     clearInterval(intervalClickerId);
@@ -285,36 +285,23 @@
         };
 
         let saveComments = () => {
-            let hostComment = getHostComment();
-            drawJSON.host = hostComment.host;
-            drawJSON.post_comment = hostComment.post_comment;
-
-            elements.commentsList = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li");
-            elements.commentsList = Array.from(elements.commentsList);
-            elements.commentsList.shift();
-
-            // Remove host comments from comments list
-            for (let i = elements.commentsList.length-1; i >= 0; i--) {
-                const userComment = getComment(i);
-                if (userComment.user === hostComment.host) {
-                    elements.commentsList.splice(i, 1);
-                }
-            }
-
-            // Saves final comments number in drawJSON
-            drawJSON.comments_number = elements.commentsList.length;
-
-            // Saves comments in drawJSON
-            for (let i = 0; i < elements.commentsList.length; i++) {
-                drawJSON.comments.push(getComment(i));
-            }
-
-            chrome.runtime.sendMessage({
-                command: "loaded"
-            });
-
-            handler.change(new GetCommentWaiter(handler));
+            getAllComments()
+                .then(commentsDict => new Promise((resolve, reject) => {
+                    try {
+                        drawJSON.comments_number = commentsDict.indices.length;
+                        drawJSON.comments = commentsDict.parsed;
+                        elements.commentsList = commentsDict.DOM;
+                        handler.change(new GetCommentWaiter(handler));
+                        chrome.runtime.sendMessage({
+                            command: "loaded"
+                        });
+                    } catch (e) {
+                        reject(e);
+                    }
+                }))
+                .catch(reportError);
         };
+
     };
 
 

@@ -37,15 +37,6 @@ function debugLog() {
     }
 }
 
-
-function insertCSS(str) {
-    let css = document.createElement("style");
-    css.type = "text/css";
-    css.innerHTML = str;
-    document.body.append(css);
-    debugLog("Inserted css");
-}
-
 /**
  *
  */
