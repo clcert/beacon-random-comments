@@ -89,11 +89,11 @@
         let listenForStateRequest = (self) => {
             debugLog("listening to send state...");
             function handleRequest(message) {
-                debugLog("received state request");
                 if (message.command === "state") {
+                    debugLog("received state request");
                     if (elements.currentUrl) {
                         if (elements.currentUrl !== message.url) {
-                            debugLog("url changed");
+                            debugLog("url changed to:", message.url);
                             restartParams();
                             elements.currentUrl = message.url;
                             currentState.removeListener();
@@ -101,12 +101,13 @@
                             currentState.init();
                         }
                     } else {
+                        debugLog("url still being the same: ", message.url);
                         elements.currentUrl = message.url;
                     }
 
                     drawJSON.post_url = message.url;
 
-                    const comment = getComment(elements.currentCommentID);
+                    const comment = elements.commentsList ? getComment(elements.currentCommentID) : {user: "no user yet", comment: "no comment yet"};
                     chrome.runtime.sendMessage({
                         command: "state-response",
                         state: getStateName(),
@@ -285,21 +286,20 @@
         };
 
         let saveComments = () => {
-            getAllComments()
-                .then(commentsDict => new Promise((resolve, reject) => {
-                    try {
-                        drawJSON.comments_number = commentsDict.indices.length;
-                        drawJSON.comments = commentsDict.parsed;
-                        elements.commentsList = commentsDict.DOM;
-                        handler.change(new GetCommentWaiter(handler));
-                        chrome.runtime.sendMessage({
-                            command: "loaded"
-                        });
-                    } catch (e) {
-                        reject(e);
-                    }
-                }))
-                .catch(reportError);
+            debugLog("filtering and saving the comments");
+            try {
+                elements.commentsList = getAllDOMComments();
+                drawJSON.comments = getAllComments();
+
+                drawJSON.comments_number = drawJSON.comments.length;
+            } catch (e) {
+                reportError(e);
+            }
+
+            handler.change(new GetCommentWaiter(handler));
+            chrome.runtime.sendMessage({
+                command: "loaded"
+            });
         };
 
     };
