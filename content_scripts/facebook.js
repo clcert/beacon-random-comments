@@ -1,3 +1,4 @@
+'use strict';
 
 function debugLog() {
     if (elements.debugging) {
@@ -10,4 +11,8 @@ function debugLog() {
         }
         console.log(str);
     }
+}
+
+function clickToLoadComments() {
+
 }

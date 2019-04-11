@@ -1,3 +1,10 @@
+'use strict';
+
+function getCookie(name) {
+    let value = "; " + document.cookie;
+    let parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
 
 
 function debugLog() {
@@ -13,8 +20,61 @@ function debugLog() {
     }
 }
 
+function clickToLoadSubcomment(comment) {
+    let button = comment.childNodes[1].querySelector("ul > li > div >button");
+    let prev = comment.childNodes[1].querySelector("ul").childNodes.length;
+
+
+    let clickerTimer = null;
+
+    function clickSubComment(button) {
+        button.click();
+        let count = comment.childNodes[1].querySelector("ul").childNodes.length;
+        if (count < prev) {
+            clearInterval(clickerTimer);
+            button.click();
+        } else {
+            prev = count;
+        }
+    }
+
+    clickerTimer = window.setInterval(() => { clickSubComment(button) }, 500);
+}
+
+
 function clickToLoadComments() {
-    document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
+    if (getCookie("ds_user_id")) {
+        let isLoading = document.querySelector("article > div:nth-child(3) > div > ul > li:last-child > div > div > svg");
+
+        if (isLoading)
+            return;
+
+        document.querySelector("article > div:nth-child(3) > div > ul > li:last-child > div > button").click();
+
+        // try {
+        //     console.log("click");
+        //     document.querySelector("article > div:nth-child(3) > div > ul > li:last-child > div > button").click();
+        // } catch(e) {
+            // The lines bellow allow to load replies to replies automatically
+            // let allDOMComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > ul");
+            // console.log("TOTAL COMMENTS: ", allDOMComments.length);
+            // let allSubcomments = [];
+            // for (let i = 0; i < allDOMComments.length; i++) {
+            //     if (allDOMComments[i].childNodes.length > 1) {
+            //         allSubcomments.push(allDOMComments[i]);
+            //     }
+            // }
+            //
+            // for (let i = 0; i < allSubcomments.length; i++) {
+            //     clickToLoadSubcomment(allSubcomments[i])
+            // }
+        //     throw new Error("Finished Loading Exception");
+        // }
+
+
+    } else {
+        document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
+    }
 }
 
 /**
@@ -25,6 +85,10 @@ function getHostComment() {
     try {
         const hostComment = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li")[0];
         const host = hostComment.querySelector("div > div > div > h2 > a").textContent;
+        if (getCookie("ds_user_id")) {
+            const post_comment = hostComment.querySelector("div > div > div:nth-child(2) > span").textContent;
+            return {host: host, post_comment: post_comment};
+        }
         const post_comment = hostComment.querySelector("div > div > div > span").textContent;
         return {host: host, post_comment: post_comment};
     } catch (e) {
@@ -61,8 +125,12 @@ function getAllDOMComments() {
         return document.allDOMComments;
     } else {
         const hostComment = getHostComment();
-
+        if (getCookie("ds_user_id")) {
+            document.allDOMComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > ul");
+        } else {
             document.allDOMComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li");
+        }
+        debugLog(document.allDOMComments.length);
         document.allDOMComments = Array.from(document.allDOMComments);
         document.allDOMComments.shift();
 
@@ -73,9 +141,7 @@ function getAllDOMComments() {
         document.allComments = [];
         for (let i = 0; i < document.allDOMComments.length; i++) {
             const currUser = document.allDOMComments[i].querySelector("div > div > div > h3 > a").textContent;
-            console.log(currUser);
             if (currUser !== hostComment.host) {
-                console.log(currUser);
                 // Save the valid indices
                 document.commentsIndices.push(i);
 

@@ -9,6 +9,7 @@ html, body {
     width: 300px;
     padding: 0;
     margin: 0;
+    overflow: hidden;
 }
 
 header {
@@ -186,8 +187,17 @@ main {
     text-align: center;
 }
 
-#share-modal, #error-modal {
+#info-row {
+    margin-bottom: 0;
+}
+
+#welcome-info-modal, #finish-info-modal, #share-info-modal, #share-modal, #error-modal {
     margin-top: 40%;
+}
+
+#welcome-info, #finish-info, #share-info {
+    position: absolute;
+    right: 5%;
 }
 
 .modal-content {
@@ -210,4 +220,17 @@ main {
     margin: auto auto;
     background: url("../assets/images/telegram.png") no-repeat 30% 50%;
     background-size: 80%;
+}
+
+#share-user, #finish-user {
+    text-decoration: none;
+    color: #3897f0;
+}
+
+#share-user:hover, #finish-user:hover {
+    color: blue;
+}
+
+#verification-link:hover {
+    color: blue;
 }

@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  *
@@ -110,6 +111,11 @@ let StateHandler = function() {
                     chrome.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
                     chrome.tabs.executeScript({file: "/content_scripts/interface.js"});
 
+                    if (currentSiteInfo.name === "Instagram" && tabs[0].logged) {
+                        showSubCommentsSwitch();
+                    }
+
+
                     // Executes current site script
                     chrome.tabs.executeScript({file: currentSiteInfo.script}, () => {
                         try {
@@ -181,6 +187,12 @@ let StateHandler = function() {
                     // Change chosen user at Finish and Share views
                     elements.finishUser.innerHTML = message.user;
                     elements.shareUser.innerHTML = message.user;
+
+                    elements.finishUser.onclick = elements.shareUser.onclick = () => {
+                        chrome.tabs.create({
+                            url: "https://instagram.com/" + message.user
+                        });
+                    };
 
                     // Change attempts counter at Finish view
                     elements.attempts.innerHTML = message.counter.toString();
@@ -412,6 +424,12 @@ let ChoosingComment = function(handler) {
                     elements.finishUser.innerHTML = message.user;
                     elements.shareUser.innerHTML = message.user;
 
+                    elements.finishUser.onclick = elements.shareUser.onclick = () => {
+                        chrome.tabs.create({
+                            url: "https://instagram.com/" + message.user
+                        });
+                    };
+
                     // Change attempts counter at Finish view
                     elements.attempts.innerHTML = message.counter.toString();
 
@@ -549,6 +567,20 @@ let Share = function(handler) {
     this.init = () => {
         $("#menu").collapsible("open", 2);
         $("main").animate({scrollTop: elements.main.clientHeight}, 800);
+
+        let fbLink = document.getElementById("share-facebook-link");
+        fbLink.href = "https://facebook.com/sharer.php?u=" + elements.verificationURL;
+        fbLink.onclick = () => {
+            window.open(fbLink.href, 'facebook-share', 'width=550,height=435');
+            return false;
+        };
+
+        let twLink = document.getElementById("share-twitter-link");
+        twLink.href = "https://twitter.com/intent/tweet?text=" + elements.verificationURL;
+        twLink.onclick = () => {
+            window.open(twLink.href, 'twitter-share', 'width=550,height=435');
+            return false;
+        };
 
         if (!elements.clipboardBtn.hasEventListener) {
             elements.clipboardBtn.hasEventListener = true;

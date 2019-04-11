@@ -24,16 +24,23 @@ i18next
                 // Finish div translations
                 "attempts-text": "Tries: ",
                 "finish-chosen-user": "You have chosen to:",
+                "finish-user-title": "Click to visit Profile",
                 "btn-retry": "Retry",
                 "btn-finish": "Finish",
 
                 // Sharing div translations
                 "sharing-draw-info": "Draw Information",
                 "sharing-draw-winner-intro": "The winner is!",
+                "share-user-title": "Click to visit Profile",
 
                 // Instructions translations
-                "choose-instructions": "Click \"Start Draw\" to randomly choose a comment",
+                "welcome-instructions-title": "Draw Instructions",
+                "welcome-instructions": "Click \"Start Draw\" to randomly choose a comment",
+
+                "finish-instructions-title": "Draw Instructions",
                 "finish-instructions": "Click \"Finish\" to finish the draw or \"Retry\" to choose a new comment.",
+
+                "share-instructions-title": "Sharing Instructions",
                 "share-instructions": "Use this <a id='verification-link'>link</a> to ensure to your followers the draw was <b>random</b>, <b>transparent</b> and <b>verifiable</b>.\n" +
                     "<span>You can share it with </span><i class=\"material-icons tiny\">share</i> <span> or copy to the clipboard </span><i class=\"material-icons tiny\">content_copy</i>",
 
@@ -69,16 +76,23 @@ i18next
                 // Finish div translations
                 "finish-chosen-user": "Has escogido a:",
                 "attempts-text": "Número de Intentos: ",
+                "finish-user-title": "Click para visitar Perfil",
                 "btn-retry": "Reintentar",
                 "btn-finish" : "Terminar",
 
                 // Sharing div translations
                 "sharing-draw-info": "Información del Sorteo",
                 "sharing-draw-winner-intro": "El ganador es!",
+                "share-user-title": "Click para visitar Perfil",
 
                 // Instructions translations
-                "choose-instructions": "Haz click en \"Iniciar Sorteo\" para escoger un comentario aleatoriamente.",
+                "welcome-instructions-title": "Instrucciones Sorteo",
+                "welcome-instructions": "Haz click en \"Iniciar Sorteo\" para escoger un comentario aleatoriamente.",
+
+                "finish-instructions-title": "Instrucciones Sorteo",
                 "finish-instructions": "Haz click en \"Terminar\" para finalizar el sorteo o \"Reintentar\" para elegir un nuevo comentario.",
+
+                "share-instructions-title": "Instrucciones para compartir",
                 "share-instructions": "Utiliza este <a id='verification-link'>link</a> para asegurar a tus seguidores que el concurso fue <b>aleatorio</b>, <b>transparente</b> y <b>verificable</b>.\n" +
                     "<span>Puedes compartirlo con </span><i class=\"material-icons tiny\">share</i> <span> o copiarlo con </span><i class=\"material-icons tiny\">content_copy</i>",
 
@@ -112,6 +126,7 @@ i18next
 
         // Finish div translations
         document.getElementById("finish-chosen-user").innerText = i18next.t("finish-chosen-user");
+        document.getElementById("finish-user").title = i18next.t("finish-user-title");
         document.getElementById("attempts-text").innerText = i18next.t("attempts-text");
         document.getElementById("btn-retry").innerText = i18next.t("btn-retry");
         document.getElementById("btn-finish").innerText = i18next.t("btn-finish");
@@ -119,11 +134,17 @@ i18next
         // Sharing div translations
         document.getElementById("sharing-draw-info").innerText = i18next.t("sharing-draw-info");
         document.getElementById("sharing-draw-winner-intro").innerText = i18next.t("sharing-draw-winner-intro");
+        document.getElementById("share-user").title = i18next.t("share-user-title");
 
         // Instructions translations
-        document.getElementById("choose-instructions").innerText = i18next.t("choose-instructions");
-        document.getElementById("finish-instructions").innerText = i18next.t("finish-instructions");
-        document.getElementById("share-instructions").innerHTML = i18next.t("share-instructions");
+        document.getElementById("welcome-info-title").innerText = i18next.t("welcome-instructions-title");
+        document.getElementById("welcome-info-paragraph").innerText = i18next.t("welcome-instructions");
+
+        document.getElementById("finish-info-title").innerText = i18next.t("finish-instructions-title");
+        document.getElementById("finish-info-paragraph").innerText = i18next.t("finish-instructions");
+
+        document.getElementById("share-info-title").innerText = i18next.t("share-instructions-title");
+        document.getElementById("share-info-paragraph").innerHTML = i18next.t("share-instructions");
 
         // Share modal translations
         document.getElementById("share-title").innerText = i18next.t("share-title");

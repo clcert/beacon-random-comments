@@ -1,3 +1,5 @@
+'use strict';
+
 (function() {
     if (window.hasRun) {
         return;
@@ -108,13 +110,18 @@
                     drawJSON.post_url = message.url;
 
                     const comment = elements.commentsList ? getComment(elements.currentCommentID) : {user: "no user yet", comment: "no comment yet"};
+
+                    // TODO: Modify according site user cookie
+                    let logged = getCookie("ds_user_id") ? true : false;
+
                     chrome.runtime.sendMessage({
                         command: "state-response",
                         state: getStateName(),
                         user: comment.user,
                         comment: comment.comment,
                         counter: elements.popupRequests,
-                        url: elements.verificationURL
+                        url: elements.verificationURL,
+                        logged: logged
                     });
                     debugLog("sent state", getStateName());
                 }
@@ -290,7 +297,8 @@
             try {
                 elements.commentsList = getAllDOMComments();
                 drawJSON.comments = getAllComments();
-
+                drawJSON.host = getHostComment().host;
+                drawJSON.post_comment = getHostComment().post_comment;
                 drawJSON.comments_number = drawJSON.comments.length;
             } catch (e) {
                 reportError(e);
