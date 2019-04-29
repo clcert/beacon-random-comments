@@ -75,6 +75,15 @@ function clickToLoadComments() {
     } else {
         document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
     }
+    return getCommentsCount();
+}
+
+function getCommentsCount() {
+    if (getCookie("ds_user_id")) {
+        return document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > ul").length;
+    } else {
+        return document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li").length;
+    }
 }
 
 /**

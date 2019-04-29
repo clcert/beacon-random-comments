@@ -18,6 +18,7 @@ i18next
 
                 // Loading Choosing div translations
                 "loading-span": "Loading Comments",
+                "comments-count-text-span": "Loaded Comments: ",
                 "choosing-span": "Choosing Comment",
                 "not-reload-msg": "Please do not reload the window.",
 
@@ -70,6 +71,7 @@ i18next
 
                 // Loading Choosing div translations
                 "loading-span": "Cargando Comentarios",
+                "comments-count-text-span": "Comentarios Cargados: ",
                 "choosing-span": "Escogiendo Comentario",
                 "not-reload-msg": "Por favor no recargues la ventana.",
 
@@ -121,6 +123,7 @@ i18next
 
         // Loading Choosing div translations
         document.getElementById("loading-span").innerText = i18next.t("loading-span");
+        document.getElementById("comments-count-text-span").innerText = i18next.t("comments-count-text-span");
         document.getElementById("choosing-span").innerText = i18next.t("choosing-span");
         document.getElementById("not-reload-msg").innerText = i18next.t("not-reload-msg");
 

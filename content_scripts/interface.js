@@ -7,7 +7,7 @@
     window.hasRun = true;
 
     let elements = {
-        debugging: true,
+        debugging: false,
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
         serverURL: "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com/",
         verificationURL: null,
@@ -306,7 +306,11 @@
         let loadComments = () => {
             function clicker() {
                 try {
-                    clickToLoadComments();
+                    const commentsCount = clickToLoadComments();
+                    chrome.runtime.sendMessage({
+                        command: "comments-count",
+                        commentsCount: commentsCount
+                    })
                 } catch(err) {
                     debugLog("loaded comments...");
                     clearInterval(intervalClickerId);
@@ -331,7 +335,8 @@
 
             handler.change(new GetCommentWaiter(handler));
             chrome.runtime.sendMessage({
-                command: "loaded"
+                command: "loaded",
+                commentsCount: getCommentsCount()
             });
         };
 

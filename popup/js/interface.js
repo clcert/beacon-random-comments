@@ -7,7 +7,7 @@
  * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
  */
 let elements = {
-    debugging: true,
+    debugging: false,
     verificationURL: null,
     collapsibleHeaders: document.getElementsByClassName("collapsible-header"),
     welcomeDiv: document.getElementById("welcome"),
@@ -309,6 +309,7 @@ let Welcome = function(handler) {
         }
 
         $("#welcome").hide();
+        $("#spinner-placeholder").hide();
         $("#loading-choosing").show();
 
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
@@ -344,9 +345,13 @@ let LoadingComments = function(handler) {
             if (message.command === "loaded") {
                 $("#loading-spinner").hide();
                 $("#loading-check").show();
-
+                $("#spinner-placeholder").show();
+                document.getElementById("comments-count-span").innerText = message.commentsCount;
                 handler.change(new RequestingComment(handler));
                 removeLoadedListener();
+            } else if(message.command === "comments-count") {
+                debugLog("comments count is", message.commentsCount);
+                document.getElementById("comments-count-span").innerText = message.commentsCount;
             }
 
            // TODO

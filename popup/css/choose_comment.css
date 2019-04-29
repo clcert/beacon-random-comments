@@ -234,3 +234,8 @@ main {
 #verification-link:hover {
     color: blue;
 }
+
+#comments-count-span, #comments-count-text-span {
+    font-style: italic;
+    color: slategray;
+}
