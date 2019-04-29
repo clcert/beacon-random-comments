@@ -206,51 +206,76 @@
 
         this.removeListener = () => {};
 
-        let requestToURL = (url, callback) => {
-            let request = new XMLHttpRequest();
-            request.open("GET", url, true);
-            request.onload = function () {
-                const status = request.status;
-                if (status === 200) {
-                    callback(null, request.response);
-                } else {
-                    callback(status, null);
-                }
-            };
-            request.send();
-        };
+        // let requestToURL = (url, callback) => {
+        //     let request = new XMLHttpRequest();
+        //     request.open("GET", url, true);
+        //     request.onload = function () {
+        //         const status = request.status;
+        //         if (status === 200) {
+        //             callback(null, request.response);
+        //         } else {
+        //             callback(status, null);
+        //         }
+        //     };
+        //     request.send();
+        // };
 
         let requestSeed = () => {
+            function seedHandler(message) {
+                if (message.command === "seed-json") {
+                    elements.seed = message.data.pulse.outputValue;
+                    drawJSON.pulse_url = message.data.pulse.uri;
+
+                    debugLog("seed is", elements.seed);
+                    Math.seedrandom(elements.seed);
+
+                    removeListener();
+                    handler.change(new CommentsLoader(handler));
+
+                }
+            }
+
+            function removeListener() {
+                chrome.runtime.onMessage.removeListener(seedHandler);
+            }
+
             try {
-                debugLog("inside requestSeed function");
-                requestToURL(elements.beaconURL, (err, data) => {
-                    debugLog("received Beacon response...");
-                    if (err) {
-                        console.error(err);
-                        chrome.runtime.sendMessage({
-                            command: "failed",
-                            detail: err
-                        });
-
-                    } else {
-                        try {
-                            elements.seed = JSON.parse(data).pulse.outputValue;
-
-                            // Saves pulse URI
-                            drawJSON.pulse_url = JSON.parse(data).pulse.uri;
-
-                            debugLog("seed is", elements.seed);
-                            Math.seedrandom(elements.seed);
-                            handler.change(new CommentsLoader(handler));
-                        } catch (e) {
-                            console.error(e);
-                            chrome.runtime.sendMessage({
-                                command: 'failed',
-                                detail: e
-                            });
-                        }
-                    }
+                // debugLog("inside requestSeed function");
+                // requestToURL(elements.beaconURL, (err, data) => {
+                //     debugLog("received Beacon response...");
+                //     if (err) {
+                //         console.error(err);
+                //         chrome.runtime.sendMessage({
+                //             command: "failed",
+                //             detail: err
+                //         });
+                //
+                //     } else {
+                //         try {
+                //             elements.seed = JSON.parse(data).pulse.outputValue;
+                //
+                //             // Saves pulse URI
+                //             drawJSON.pulse_url = JSON.parse(data).pulse.uri;
+                //
+                //             debugLog("seed is", elements.seed);
+                //             Math.seedrandom(elements.seed);
+                //             handler.change(new CommentsLoader(handler));
+                //         } catch (e) {
+                //             console.error(e);
+                //             chrome.runtime.sendMessage({
+                //                 command: 'failed',
+                //                 detail: e
+                //             });
+                //         }
+                //     }
+                // });
+                chrome.runtime.sendMessage({
+                    command: "get-seed"
                 });
+
+
+
+                chrome.runtime.onMessage.addListener(seedHandler);
             } catch (err) {
                 console.log(err);
             }
@@ -446,18 +471,38 @@
 
         let sendWinnerJSON = function() {
             debugLog("sending winner to server...");
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", elements.serverURL, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    debugLog("received URL by server");
-                    elements.verificationURL = xhr.responseText;
+            // let xhr = new XMLHttpRequest();
+            // xhr.open("POST", elements.serverURL, true);
+            // xhr.setRequestHeader("Content-Type", "application/json");
+            // xhr.onreadystatechange = function () {
+            //     if (xhr.readyState === 4 && xhr.status === 200) {
+            //         debugLog("received URL by server");
+            //         elements.verificationURL = xhr.responseText;
+            //
+            //         handler.change(new Finished(handler));
+            //     }
+            // };
+            // xhr.send(JSON.stringify(drawJSON));
 
+            function winnerURLListener(message) {
+                if (message.command === "winner-url") {
+                    elements.verificationURL = message.url;
                     handler.change(new Finished(handler));
+                    removeWinnerListener();
                 }
-            };
-            xhr.send(JSON.stringify(drawJSON));
+            }
+
+            function removeWinnerListener() {
+                chrome.runtime.onMessage.removeListener(winnerURLListener);
+            }
+
+            debugLog("asking for winner url");
+            chrome.runtime.sendMessage({
+                command: "send-winner",
+                winnerJSON: drawJSON
+            });
+
+            chrome.runtime.onMessage.addListener(winnerURLListener);
         };
     };
 

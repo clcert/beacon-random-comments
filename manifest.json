@@ -15,10 +15,16 @@
     "https://www.instagram.com/p/*",
     "https://beacon.clcert.cl/beacon/2.0/pulse/last",
     "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com/",
-    "webRequest",
     "tabs",
     "storage"
   ],
+
+  "background": {
+    "scripts": [
+      "requester.js"
+    ],
+    "persistent": false
+  },
 
   "browser_action": {
     "default_icon": "assets/icons/dice-128.png",
