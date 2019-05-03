@@ -345,7 +345,6 @@ let LoadingComments = function(handler) {
             if (message.command === "loaded") {
                 $("#loading-spinner").hide();
                 $("#loading-check").show();
-                $("#spinner-placeholder").show();
                 document.getElementById("comments-count-span").innerText = message.commentsCount;
                 handler.change(new RequestingComment(handler));
                 removeLoadedListener();

@@ -239,3 +239,7 @@ main {
     font-style: italic;
     color: slategray;
 }
+
+#comments-count-text-span {
+    padding-left: 8.33%;
+}

@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "Random Comments",
   "short_name": "Random Comments",
-  "version": "1.0.8",
+  "version": "1.0.9",
 
   "description": "Picks a comment, from an Instagram post, completely at random using the service provided by Random UChile." ,
   "homepage_url": "https://github.com/clcert/beacon-random-comments",
