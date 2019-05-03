@@ -91,7 +91,12 @@ function handleSendWinner(message) {
 
 // Create the listener of the background script
 chrome.runtime.onInstalled.addListener(function(){
-
-    // Create the listener to handle all messages
-    chrome.runtime.onMessage.addListener(handleMessage);
+    chrome.contextMenus.create({
+        "id": "requester",
+        "title": "Requester Context Menu",
+        "contexts": ["launcher"]
+    });
 });
+
+// Create the listener to handle all messages
+chrome.runtime.onMessage.addListener(handleMessage);

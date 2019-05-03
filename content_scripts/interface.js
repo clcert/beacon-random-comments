@@ -7,7 +7,7 @@
     window.hasRun = true;
 
     let elements = {
-        debugging: false,
+        debugging: true,
         beaconURL:  "https://beacon.clcert.cl/beacon/2.0/pulse/last",
         serverURL: "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com/",
         verificationURL: null,
