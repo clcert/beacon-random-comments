@@ -1,3 +1,5 @@
+'use strict';
+
 const beaconURL = "https://beacon.clcert.cl/beacon/2.0/pulse/last";
 const serverURL = "http://ec2-18-219-248-89.us-east-2.compute.amazonaws.com/";
 

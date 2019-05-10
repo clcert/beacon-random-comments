@@ -51,27 +51,6 @@ function clickToLoadComments() {
 
         document.querySelector("article > div:nth-child(3) > div > ul > li:last-child > div > button").click();
 
-        // try {
-        //     console.log("click");
-        //     document.querySelector("article > div:nth-child(3) > div > ul > li:last-child > div > button").click();
-        // } catch(e) {
-            // The lines bellow allow to load replies to replies automatically
-            // let allDOMComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > ul");
-            // console.log("TOTAL COMMENTS: ", allDOMComments.length);
-            // let allSubcomments = [];
-            // for (let i = 0; i < allDOMComments.length; i++) {
-            //     if (allDOMComments[i].childNodes.length > 1) {
-            //         allSubcomments.push(allDOMComments[i]);
-            //     }
-            // }
-            //
-            // for (let i = 0; i < allSubcomments.length; i++) {
-            //     clickToLoadSubcomment(allSubcomments[i])
-            // }
-        //     throw new Error("Finished Loading Exception");
-        // }
-
-
     } else {
         document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
     }
