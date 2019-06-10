@@ -1,11 +1,5 @@
 'use strict';
 
-function getCookie(name) {
-    let value = "; " + document.cookie;
-    let parts = value.split("; " + name + "=");
-    if (parts.length === 2) return parts.pop().split(";").shift();
-}
-
 
 function debugLog() {
     if (elements.debugging) {
@@ -20,49 +14,9 @@ function debugLog() {
     }
 }
 
-function clickToLoadSubcomment(comment) {
-    let button = comment.childNodes[1].querySelector("ul > li > div >button");
-    let prev = comment.childNodes[1].querySelector("ul").childNodes.length;
-
-
-    let clickerTimer = null;
-
-    function clickSubComment(button) {
-        button.click();
-        let count = comment.childNodes[1].querySelector("ul").childNodes.length;
-        if (count < prev) {
-            clearInterval(clickerTimer);
-            button.click();
-        } else {
-            prev = count;
-        }
-    }
-
-    clickerTimer = window.setInterval(() => { clickSubComment(button) }, 500);
-}
-
-
-function clickToLoadComments() {
-    if (getCookie("ds_user_id")) {
-        let isLoading = document.querySelector("article > div:nth-child(3) > div > ul > li:last-child > div > div > svg");
-
-        if (isLoading)
-            return;
-
-        document.querySelector("article > div:nth-child(3) > div > ul > li:last-child > div > button").click();
-
-    } else {
-        document.querySelector("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)").click();
-    }
-    return getCommentsCount();
-}
 
 function getCommentsCount() {
-    if (getCookie("ds_user_id")) {
-        return document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > ul").length;
-    } else {
-        return document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li").length;
-    }
+    return document.querySelectorAll("article > div > div > ul > ul").length;
 }
 
 /**
@@ -73,11 +27,7 @@ function getHostComment() {
     try {
         const hostComment = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li")[0];
         const host = hostComment.querySelector("div > div > div > h2 > a").textContent;
-        if (getCookie("ds_user_id")) {
-            const post_comment = hostComment.querySelector("div > div > div:nth-child(2) > span").textContent;
-            return {host: host, post_comment: post_comment};
-        }
-        const post_comment = hostComment.querySelector("div > div > div > span").textContent;
+        const post_comment = hostComment.querySelector("div > div > div:nth-child(2) > span").textContent;
         return {host: host, post_comment: post_comment};
     } catch (e) {
         reportError(e);
@@ -108,19 +58,27 @@ function getAllComments() {
 }
 
 
+function clickToLoadComments() {
+    let isLoading = document.querySelectorAll("article > div > div > ul > li > div > div > svg")[0];
+
+    if (isLoading)
+        return;
+
+    let button = document.querySelectorAll("article > div > div > ul > li > div > button")[0];
+    button.click();
+    return getCommentsCount();
+}
+
+
 function getAllDOMComments() {
     if (document.allDOMComments) {
         return document.allDOMComments;
     } else {
         const hostComment = getHostComment();
-        if (getCookie("ds_user_id")) {
-            document.allDOMComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > ul");
-        } else {
-            document.allDOMComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li");
-        }
+
+        document.allDOMComments = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > ul");
         debugLog(document.allDOMComments.length);
         document.allDOMComments = Array.from(document.allDOMComments);
-        document.allDOMComments.shift();
 
         debugLog(`there was a total of ${document.allDOMComments.length} comments`);
 

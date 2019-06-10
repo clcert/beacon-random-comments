@@ -111,10 +111,6 @@ let StateHandler = function() {
                     chrome.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
                     chrome.tabs.executeScript({file: "/content_scripts/interface.js"});
 
-                    if (currentSiteInfo.name === "Instagram" && tabs[0].logged) {
-                        showSubCommentsSwitch();
-                    }
-
 
                     // Executes current site script
                     chrome.tabs.executeScript({file: currentSiteInfo.script}, () => {

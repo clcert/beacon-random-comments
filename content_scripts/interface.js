@@ -75,6 +75,159 @@
     }
 
 
+
+    function insertAfter(newNode, referenceNode) {
+        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    }
+
+
+
+    function getModal(modalName) {
+        let modal = document.createElement("div");
+        modal.setAttribute("id","modal-base");
+        modal.id = modalName;
+        modal.style.display = "block";
+        modal.style.position = "fixed";
+        modal.style.zIndex = "1";
+        modal.style.top = modal.style.left = "0";
+        modal.style.height = "100%";
+        modal.style.width = "80%";
+        modal.style.overflow = "hidden";
+
+        let modalContent = document.createElement("div");
+        modalContent.style.backgroundColor = "#fefefe";
+        modalContent.style.margin = "15% auto";
+        modalContent.style.padding = "20px";
+        modalContent.style.border = "1px solid #888";
+        modalContent.style.width = "80%";
+
+        let close = document.createElement("span");
+        close.innerHTML = "&times;";
+        close.style.color = "#aaa";
+        close.style.float = "right";
+        close.style.fontSize = "28px";
+        close.style.fontWeight = "bold";
+
+        modalContent.appendChild(close);
+        modal.appendChild(modalContent);
+
+        close.onclick = function () {
+            modal.style.display = "none";
+        };
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        return modal;
+    }
+
+    function displayWelcomeModal() {
+        let modal = getModal("welcome-modal");
+
+        let modalContent = modal.childNodes[0];
+
+        let title = document.createElement("p");
+        // TODO modify text by using i18n
+        title.innerText = "Bienvenido a Random Coments";
+        title.style.marginTop = "3%";
+        title.style.textAlign = "center";
+        title.style.fontSize = "3em";
+        title.style.lineHeight = "1em";
+
+        let text = document.createElement("p");
+        text.innerText = "Antes de comenzar el sorteo te recomendamos grabar el mismo, ya sea en forma de historia o " +
+            "como te parezca más conveniente!";
+        text.style.margin = "5%";
+        text.style.fontSize = "1.5em";
+        text.style.lineHeight = "1em";
+        text.style.textAlign = "center";
+
+        modalContent.appendChild(title);
+        modalContent.appendChild(text);
+
+        let lastHeader = document.getElementsByTagName("article");
+        lastHeader = lastHeader[lastHeader.length-1];
+        insertAfter(modal, lastHeader);
+    }
+
+    function hideDOMElement(id) {
+        let htmlElement = document.getElementById(id);
+        if (htmlElement) {
+            htmlElement.style.display = "none";
+        }
+    }
+
+    function displayFinishModal() {
+        let modal = getModal("finish-modal");
+
+        let modalContent = modal.childNodes[0];
+
+        let title = document.createElement("p");
+        // TODO modify text by using i18n
+        title.innerText = "Gracias por haber utilizado Random Comments";
+        title.style.marginTop = "2.5%";
+        title.style.textAlign = "center";
+        title.style.fontSize = "2.5em";
+        title.style.lineHeight = "1em";
+
+        let text = document.createElement("p");
+        text.innerText = "Con el siguiente link tus seguidores podrán verificar tu sorteo!";
+        text.style.margin = "5% 5% 2% 5%";
+        text.style.fontSize = "1.5em";
+        text.style.lineHeight = "1em";
+        text.style.textAlign = "center";
+
+        let aDiv = document.createElement("div");
+        aDiv.style.display = "inline";
+        aDiv.style.textAlign = "center";
+        aDiv.style.marginBottom = "5%";
+
+        let winnerForm = document.createElement("form");
+        winnerForm.style.marginBottom = "5%";
+        winnerForm.style.textAlign = "center";
+        winnerForm.style.width = "80%";
+        winnerForm.style.display = "inline";
+
+        let winnerLink = document.createElement("input");
+        winnerLink.setAttribute("type", "text");
+        winnerLink.setAttribute("value", elements.verificationURL);
+        winnerLink.style.width = "50%";
+
+        winnerForm.appendChild(winnerLink);
+
+        let copyToClipBoardButton = document.createElement("button");
+        copyToClipBoardButton.innerHTML = "&#128203;";
+        copyToClipBoardButton.style.height = "2em";
+        copyToClipBoardButton.style.backgroundColor = "#3897f0";
+        copyToClipBoardButton.style.border = "none";
+        copyToClipBoardButton.style.borderRadius = "5px";
+        copyToClipBoardButton.style.display = "inline";
+        copyToClipBoardButton.style.marginLeft = "2%";
+        copyToClipBoardButton.style.color = "white";
+        copyToClipBoardButton.addEventListener("click", function () {
+            const el = document.createElement('textarea');
+            el.value = elements.verificationURL;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        });
+
+
+        modalContent.appendChild(title);
+        modalContent.appendChild(text);
+        aDiv.appendChild(winnerForm);
+        aDiv.appendChild(copyToClipBoardButton);
+        modalContent.appendChild(aDiv);
+
+        let lastHeader = document.getElementsByTagName("article");
+        lastHeader = lastHeader[lastHeader.length-1];
+        insertAfter(modal, lastHeader);
+    }
+
     /**
      *
      * @constructor
@@ -86,6 +239,7 @@
         this.change = (state) => {
             currentState = state;
             currentState.init();
+
         };
 
         let listenForStateRequest = (self) => {
@@ -111,8 +265,19 @@
 
                     const comment = elements.commentsList ? getComment(elements.currentCommentID) : {user: "no user yet", comment: "no comment yet"};
 
-                    // TODO: Modify according site user cookie
-                    let logged = getCookie("ds_user_id") ? true : false;
+                    if (getStateName() === "load-waiter") {
+                        let welcomeModal = document.getElementById("welcome-modal");
+                        if (welcomeModal) {
+                            welcomeModal.style.display = "block";
+                        }
+                    }
+
+                    if (getStateName() === "finished") {
+                        let finishModal = document.getElementById("finish-modal");
+                        if (finishModal) {
+                            finishModal.style.display = "block";
+                        }
+                    }
 
                     chrome.runtime.sendMessage({
                         command: "state-response",
@@ -121,7 +286,6 @@
                         comment: comment.comment,
                         counter: elements.popupRequests,
                         url: elements.verificationURL,
-                        logged: logged
                     });
                     debugLog("sent state", getStateName());
                 }
@@ -151,6 +315,7 @@
         this.init = () => {
             debugLog("Waiting to load...");
             listenToLoad(this);
+            displayWelcomeModal();
         };
 
         this.getName = () => {
@@ -176,6 +341,7 @@
                     showCommentsLoadingIcon();
                     debugLog(message.loadingURL);
 
+                    hideDOMElement("welcome-modal");
                     handler.change(new SeedRequester(handler));
                 }
             }
@@ -264,18 +430,20 @@
             function clicker() {
                 try {
                     const commentsCount = clickToLoadComments();
+                    console.log("comments count is", commentsCount);
                     chrome.runtime.sendMessage({
                         command: "comments-count",
                         commentsCount: commentsCount
                     })
                 } catch(err) {
+                    console.log(err);
                     debugLog("loaded comments...");
                     clearInterval(intervalClickerId);
                     saveComments();
                 }
             }
 
-            intervalClickerId = window.setInterval(clicker, 500);
+            intervalClickerId = window.setInterval(clicker, 800);
         };
 
         let saveComments = () => {
@@ -462,6 +630,7 @@
 
         this.init = () => {
             sendWinnerURL();
+            displayFinishModal();
         };
 
         this.getName = () => {
