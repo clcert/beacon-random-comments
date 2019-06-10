@@ -17,7 +17,7 @@ cada vez que vuelve a abrir, es por ello que se decidió guardar el estado del s
 página del sorteo, el que es solicitado cada vez que se abre la extensión. A continuación se muestra un diagrama de los
 estados del popup:
 
-INSERTAR IMAGEN
+![Popup States Diagram](img/popup-diagram.png)
 
 Si deseas saber qué hace específicamente cada estado, visita el siguiente link.
 
@@ -33,6 +33,8 @@ popup mencionado más arriba. Tambien permite interactuar con el usuario modific
 Es importante mencionar que este script también funciona como una máquina de estados, la que puede ser apreciada en la 
 siguiente imagen:
 
+![Content Script Diagram](img/content-script-diagram.png)
+
 
 ## Background Script
 
@@ -44,6 +46,10 @@ página de verificación (pero con POST).
 Este script es símplemente un listener que espera a que los otros scripts le pidan realizar estas consultas (esto a 
 través de la WebExtensions API). Debido a que en Chrome, este script no puede correr persistentemente en background (por 
 motivos de seguridad explicados aquí), este se ejecuta solo cuando el usuario interactúa con el popup.
+
+<div style="text-align: center">
+    <img alt="Background Script Diagram" src="img/background-script-diagram.png">
+</div>
 
 Si te interesa crear una aplicación que usa la API de Random UChile en la que tus usuarios puedan utilizar aleatoriedad
 verificable, por favor visita el siguiente link. 
