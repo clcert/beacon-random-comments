@@ -110,5 +110,5 @@ El proceso en general, puede ser descrito por el siguiente diagrama de secuencia
 </p>
 
 Donde se agregó un *Share Server* que sirve para indicar que se publicó
-la información del proceso realizado en alguna lugar para que una tercera
+la información del proceso realizado en algunamansin lugar para que una tercera
 parte pueda verificar la correctitud del mismo.

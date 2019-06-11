@@ -45,8 +45,8 @@ documentación necesaria para saber cómo implementar una aplicación utilizando
 Esta sección está dividida en dos partes, la primera trata sobre la implementación de la extensión en sí, mientras que 
 la segunda se enfoca en explicar cómo se interactua con la API de Random UChile.
 
-* Random Comments (<a href="" target="_blank"></a>)
-* API Random UChile (<a href="" target="_blank"></a>)
+* [Random Comments](documentation/randomcomments.md)
+* [API Random UChile](documentation/randomuchile.md)
  
 
  
