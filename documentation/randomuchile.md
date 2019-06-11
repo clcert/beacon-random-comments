@@ -4,7 +4,7 @@ Este documento es una especie de guía sobre cómo utilizar la API de Random UCh
 la aleatoriedad generada por el Beacon de Random UChile y poder verificar a posteriori la validez del proceso.
 
 
-## Cómo llamar a la API del Beacon de Random UChile
+## LLamado a la API del Beacon de Random UChile
 
 En esta aplicación en específico se utiliza la API de Random UChile para, a través de una consulta GET obtener un 
 archivo de formato JSON que contiene un string de XXX bytes generado aleatoriamente. 
@@ -13,12 +13,42 @@ archivo de formato JSON que contiene un string de XXX bytes generado aleatoriame
     <img alt="API Random Uchile" src="img/api-call.png"/>
 </p>
 
-Se presenta continuación un ejemplo de consultas para obtener dicho JSON en Javascript y en Python.
+Se presenta continuación un ejemplo de consultas para obtener dicho JSON.
 
-<!-- TODO: Agregar ejemplos -->
+Javascript
+```javascript
+function handleJSON(err, data) {
+    ...
+}
 
+const beaconURL = "https://beacon.clcert.cl/beacon/2.0/pulse/last";
+let xhr = new XMLHttpRequest();
+xhr.open("GET", beaconURL, true);
+xhr.onload = function () {
+   if (xhr.status === 200) {
+       const beaconPulse = JSON.parse(xhr.response).pulse;
+       handleJSON(null, beaconPulse);
+   } else {
+       handleJSON(xhr.status, null);
+   }
+};
+xhr.send();
+```
 
-## Cómo utilizar el string obtenido del Beacon de Random UChile
+Python
+```python
+import requests
+
+def handle_json(data):
+    ...
+
+beacon_url = "https://beacon.clcert.cl/beacon/2.0/pulse/last"
+content = requests.get(beacon_url)
+pulse = content.json()["pulse"]
+handle_json(pulse)
+```
+
+## Utilización del string obtenido desde el Beacon de Random UChile
 
 Una vez recibido dicho string, este es utilizado como semilla por un generador pseudo aleatorio que sirve para obtener 
 un número entero (o real), que pueda ser usado dentro de un proceso que requiera aleatoriedad, contando, en paralelo la 
@@ -26,14 +56,29 @@ cantidad de llamados a la función que entrega dichos valores. En el caso espec�
 dichos números como representantes para los comentarios a escoger dentro del universo de comentarios válidos del post.
 
 <p align="center">
-    <img alt="API Random Uchile" src="img/prng.png"/>
+    <img alt="Pseudo Random Number Generator" src="img/prng.png"/>
 </p>
 
-A continuación se puede apreciar un ejemplo de uso de la semilla obtenida anteriormente por un generador pseudo 
-aleatorio y la posterior generación y uso de valores entregados por el mismo:
+A continuación se puede apreciar un ejemplo de uso de la semilla obtenida anteriormente luego de ser entregada a un generador pseudo 
+aleatorio, con una posterior generación y uso de valores entregados por el mismo:
+
+Javascript
+```javascript
+// Pendiente
+```
+
+Python
+```python
+import random
+
+def handle_json(data):
+    beacon_seed = data["outputValue"]
+    random.seed(beacon_seed)
+    print(random.randint(0, 10))
+```
 
 
-## Cómo verificar vía replicación de un proceso aleatorio
+## Verificación vía replicación de un proceso aleatorio
 
 Una vez que se ha terminado con el proceso que requiere aleatoriedad, puede ser de interés para terceras personas el 
 verificar que dicho proceso aleatorio fue legítimo. Para ello hay varios enfoques, pero en esta sección se mencionará
@@ -50,7 +95,7 @@ Finalmente se comparte la información inicial (identificador del pulso utilizad
 un tercero pueda verificar la correctitud del proceso replicando el mismo, localmente.
 
 <p align="center">
-    <img alt="API Random Uchile" src="img/verification.png"/>
+    <img alt="Verificación API Random Uchile" src="img/verification.png"/>
 </p>
 
 <!-- TODO: Agregar código ejemplo --> 
