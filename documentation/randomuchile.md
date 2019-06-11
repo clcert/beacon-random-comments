@@ -7,7 +7,7 @@ la aleatoriedad generada por el Beacon de Random UChile y poder verificar a post
 ## LLamado a la API del Beacon de Random UChile
 
 En esta aplicación en específico se utiliza la API de Random UChile para, a través de una consulta GET obtener un 
-archivo de formato JSON que contiene un string de XXX bytes generado aleatoriamente. 
+archivo de formato JSON que contiene un string de 512 bits (expresado en hexadecimal) generado aleatoriamente. 
 
 <p align="center">
     <img alt="API Random Uchile" src="img/api-call.png"/>
