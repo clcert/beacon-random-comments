@@ -101,4 +101,14 @@ un tercero pueda verificar la correctitud del proceso replicando el mismo, local
 <!-- TODO: Agregar código ejemplo --> 
 
 
-<!-- TODO: Agregar Diagrama general -->
+## Resumen Proceso
+
+El proceso en general, puede ser descrito por el siguiente diagrama de secuencia: 
+
+<p align="center">
+    <img alt="Diagrama de Secuencia uso API Random Uchile" src="img/sequence-diagram-api.png"/>
+</p>
+
+Donde se agregó un *Share Server* que sirve para indicar que se publicó
+la información del proceso realizado en alguna lugar para que una tercera
+parte pueda verificar la correctitud del mismo.
