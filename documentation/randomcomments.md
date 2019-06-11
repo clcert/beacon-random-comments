@@ -7,7 +7,7 @@ request que requiera Cross-Origin Resource Sharing (CORS).
 
 
 ## Popup
-
+<img align="right" width="10%" src="../screenshots/welcome.png"/>
 Un popup, más que un script es toda una interfaz por sí misma y por ende contiene su propio Javascript, HTML y CSS. Es 
 compatible tanto con Firefox como con Chrome (ver referencias al final). 
 
@@ -19,7 +19,9 @@ estados del popup:
 
 ![Popup States Diagram](img/popup-diagram.png)
 
-Si deseas saber qué hace específicamente cada estado, visita el siguiente link.
+Si deseas saber qué hace específicamente cada estado, visita el siguiente [link](../popup/js/interface.js).
+
+Aquí podrás encontrar más información acerca popups para [Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Popups) y navegadores basados en [Chromium](https://developer.chrome.com/extensions/user_interface#popup).
 
 
 ## Content Scripts
@@ -38,7 +40,7 @@ siguiente imagen:
 
 ## Background Script
 
-Debido a que desde el INSERTAR FECHA Chrome acotó los permisos de los Content Scripts, se debió agregar un background
+Debido a que desde su versión 73, Chrome acotó los [permisos](https://www.chromium.org/Home/chromium-security/extension-content-script-fetches) de los Content Scripts, se debió agregar un background
 script a la extensión para poder realizar Cross-Origin HTTP requests ya que para poder utilizar la API de Random UChile
 se requiere hacer una consulta GET a un origen distinto al de la extensión misma, lo mismo con la generación de la 
 página de verificación (pero con POST).
