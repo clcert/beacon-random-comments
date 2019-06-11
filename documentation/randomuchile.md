@@ -1,4 +1,4 @@
-# Random UChile API
+# Beacon Random UChile API
 
 Este documento es una especie de guía sobre cómo utilizar la API de Random UChile para crear una aplicación que utiliza 
 la aleatoriedad generada por el Beacon de Random UChile y poder verificar a posteriori la validez del proceso.
@@ -9,7 +9,9 @@ la aleatoriedad generada por el Beacon de Random UChile y poder verificar a post
 En esta aplicación en específico se utiliza la API de Random UChile para, a través de una consulta GET obtener un 
 archivo de formato JSON que contiene un string de XXX bytes generado aleatoriamente. 
 
-<!-- TODO: Agregar imágen de consulta al beacon -->
+<p align="center">
+    <img alt="API Random Uchile" src="img/api-call.png"/>
+</p>
 
 Se presenta continuación un ejemplo de consultas para obtener dicho JSON en Javascript y en Python.
 
@@ -23,7 +25,9 @@ un número entero (o real), que pueda ser usado dentro de un proceso que requier
 cantidad de llamados a la función que entrega dichos valores. En el caso específico de Random Comments, se utilizan
 dichos números como representantes para los comentarios a escoger dentro del universo de comentarios válidos del post.
 
-<!-- TODO: Agregar imágen del generador pseudo aleatorio y las salidas de valores -->
+<p align="center">
+    <img alt="API Random Uchile" src="img/prng.png"/>
+</p>
 
 A continuación se puede apreciar un ejemplo de uso de la semilla obtenida anteriormente por un generador pseudo 
 aleatorio y la posterior generación y uso de valores entregados por el mismo:
@@ -45,7 +49,11 @@ llamados.
 Finalmente se comparte la información inicial (identificador del pulso utilizado, datos iniciales y contador) para que
 un tercero pueda verificar la correctitud del proceso replicando el mismo, localmente.
 
-<!-- TODO: Agregar Diagrama verificación y código ejemplo --> 
+<p align="center">
+    <img alt="API Random Uchile" src="img/verification.png"/>
+</p>
+
+<!-- TODO: Agregar código ejemplo --> 
 
 
 <!-- TODO: Agregar Diagrama general -->

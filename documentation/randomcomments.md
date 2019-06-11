@@ -48,7 +48,7 @@ través de la WebExtensions API). Debido a que en Chrome, este script no puede c
 motivos de seguridad explicados aquí), este se ejecuta solo cuando el usuario interactúa con el popup.
 
 <p align="center">
-<img alt="Background Script Diagram" src="img/background-script-diagram.png"/>
+    <img alt="Background Script Diagram" src="img/background-script-diagram.png"/>
 </p>
 
 Si te interesa crear una aplicación que usa la API de Random UChile en la que tus usuarios puedan utilizar aleatoriedad
