@@ -48,7 +48,7 @@ pulse = content.json()["pulse"]
 handle_json(pulse)
 ```
 
-## Uso del valor aleatorio
+## 2. Uso del valor aleatorio
 
 Una vez obtenido dicho valor aleatorio (`outputValue`), este puede ser utilizado como semilla para un generador pseudo aleatorio (PRNG por sus siglas en inglés), que sirve para obtener flujo de números aleatorios, los cuales pueden ser utilizados de la manera que la aplicación a desarrollar necesite. Algunos ejemplos de usos más comunes son: selección al azar de un número entero en un rango específico, escoger uno (o varios) elemento(s) al azar de un conjunto, revolver (cambiar el orden) de los elementos de un conjunto, etc.
 
@@ -73,7 +73,7 @@ def handle_json(data):
     return random.randint(0, 10)  # Get a random integer in a range
 ```
 
-## Verificación del proceso aleatorio
+## 3. Datos para verificación del proceso aleatorio
 
 Una vez que se ha finalizado el aleatorio, puede ser de interés para alguna persona verificar que dicho proceso aleatorio fue legítimo (es decir, que el resultado fue realmente al azar y no fue escogido "a dedo"). Esta verificación es la principal razón para el uso de los valores generados por el Faro de Aleatoriedad. Para poder proveer un servicio aleatorio que sea verificable se sugiere seguir las siguientes directrices:
 
@@ -93,15 +93,22 @@ Con toda la información publicada en el punto 4, cualquier persona puede verifi
 
 <!-- TODO: Agregar código ejemplo --> 
 
+## 4. Verificación por un observador externo 
 
-## Resumen Proceso
+Una parte fundamental del proceso es poder brindar un servicio de verificación para cualquier observador externo de que el proceso aleatorio fue llevado a cabo correctamente. Para ello se deben cumplir los siguientes requisitos:
 
-El proceso en general, puede ser descrito por el siguiente diagrama de secuencia: 
+1. Algoritmo público: el proceso aleatorio en cuestión debe ser público, y lo único que hace impredecible su resultado es la semilla a utilizar en el PRNG.
+
+2. Publicación de los datos: todos los datos generados siguiendo los pasos descritos en la sección anterior deben ser públicos y de libre acceso por parte de cualquier persona que quiera verificar el proceso.
+
+3. Código fuente de *script* de verificación: para asegurar la mayor transparencia posible, se debe publicar el código fuente que verifique el proceso. Este *script* debe replicar el algoritmo del procesos aleatorio, utilizando los datos publicados en el punto 2. 
+
+4. [Opcional] Servicio de verificación: además del código fuente, es deseable que la organización (o persona) que esté a cargo del proceso aleatorio brinde un servicio de verificación, montado en servidores propios, que tenga la posibilidad de aceptar los datos publicados y recrear el sorteo, permitiendo a las personas verificar que el resultado final es correcto y, fundamentalmente, aleatorio.
+
+## Resumen General
+
+Los pasos anteriormente descritos se pueden resumir en el siguiente diagrama:
 
 <p align="center">
     <img alt="Diagrama de Secuencia uso API Random Uchile" src="img/sequence-diagram-api.png"/>
 </p>
-
-Donde se agregó un *Share Server* que sirve para indicar que se publicó
-la información del proceso realizado en algunamansin lugar para que una tercera
-parte pueda verificar la correctitud del mismo.
