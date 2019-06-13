@@ -1,26 +1,25 @@
-# Beacon Random UChile API
+# Randomness Beacon API - Random UChile
 
-Este documento es una especie de guía sobre cómo utilizar la API de Random UChile para crear una aplicación que utiliza 
-la aleatoriedad generada por el Beacon de Random UChile y poder verificar a posteriori la validez del proceso.
+Este documento es una guía sobre cómo utilizar la [API del Faro de Aleatoriedad (*Randomness Beacon*)](https://random.uchile.cl/development) de [Random UChile](https://random.uchile.cl) para crear una aplicación que utilice 
+la aleatoriedad generada por el Faro de Random UChile y que cualquier persona pueda verificar, a posteriori, la validez del proceso.
 
+## 1. Llamado a la API
 
-## LLamado a la API del Beacon de Random UChile
-
-En esta aplicación en específico se utiliza la API de Random UChile para, a través de una consulta GET obtener un 
-archivo de formato JSON que contiene un string de 512 bits (expresado en hexadecimal) generado aleatoriamente. 
+En cada uno de los *endpoints* de la API, se responde con un **pulso aleatorio**, el cual es una respuesta en formato JSON que contiene, entre otros valores, el valor aleatorio (string que representa un valor de 512 bits, en hexadecimal) generado en dicho minuto. Dicho valor se accede en el campo `pulse.outputValue`. 
 
 <p align="center">
     <img alt="API Random Uchile" src="img/api-call.png"/>
 </p>
 
-Se presenta continuación un ejemplo de consultas para obtener dicho JSON.
+### Ejemplo: API
 
-Javascript
+#### 1.1 Javascript
 ```javascript
 function handleJSON(err, data) {
-    ...
+    // do something with the JSON
 }
 
+// Get last pulse generated
 const beaconURL = "https://beacon.clcert.cl/beacon/2.0/pulse/last";
 let xhr = new XMLHttpRequest();
 xhr.open("GET", beaconURL, true);
@@ -35,32 +34,29 @@ xhr.onload = function () {
 xhr.send();
 ```
 
-Python
+#### 1.2 Python
 ```python
 import requests
 
 def handle_json(data):
-    ...
+    # do something with the JSON
 
+# Get last pulse generated
 beacon_url = "https://beacon.clcert.cl/beacon/2.0/pulse/last"
 content = requests.get(beacon_url)
 pulse = content.json()["pulse"]
 handle_json(pulse)
 ```
 
-## Utilización del string obtenido desde el Beacon de Random UChile
+## Uso del valor aleatorio
 
-Una vez recibido dicho string, este es utilizado como semilla por un generador pseudo aleatorio que sirve para obtener 
-un número entero (o real), que pueda ser usado dentro de un proceso que requiera aleatoriedad, contando, en paralelo la 
-cantidad de llamados a la función que entrega dichos valores. En el caso específico de Random Comments, se utilizan
-dichos números como representantes para los comentarios a escoger dentro del universo de comentarios válidos del post.
+Una vez obtenido dicho valor aleatorio (`outputValue`), este puede ser utilizado como semilla para un generador pseudo aleatorio (PRNG por sus siglas en inglés), que sirve para obtener flujo de números aleatorios, los cuales pueden ser utilizados de la manera que la aplicación a desarrollar necesite. Algunos ejemplos de usos más comunes son: selección al azar de un número entero en un rango específico, escoger uno (o varios) elemento(s) al azar de un conjunto, revolver (cambiar el orden) de los elementos de un conjunto, etc.
 
 <p align="center">
     <img alt="Pseudo Random Number Generator" src="img/prng.png"/>
 </p>
 
-A continuación se puede apreciar un ejemplo de uso de la semilla obtenida anteriormente luego de ser entregada a un generador pseudo 
-aleatorio, con una posterior generación y uso de valores entregados por el mismo:
+### Ejemplo: Valor aleatorio (`outputValue`) en PRNG
 
 Javascript
 ```javascript
@@ -72,27 +68,24 @@ Python
 import random
 
 def handle_json(data):
-    beacon_seed = data["outputValue"]
-    random.seed(beacon_seed)
-    print(random.randint(0, 10))
+    beacon_seed = data["outputValue"]  # Get outputValue from pulse
+    random.seed(beacon_seed)  # Seed the default PRNG
+    return random.randint(0, 10)  # Get a random integer in a range
 ```
 
+## Verificación del proceso aleatorio
 
-## Verificación vía replicación de un proceso aleatorio
+Una vez que se ha finalizado el aleatorio, puede ser de interés para alguna persona verificar que dicho proceso aleatorio fue legítimo (es decir, que el resultado fue realmente al azar y no fue escogido "a dedo"). Esta verificación es la principal razón para el uso de los valores generados por el Faro de Aleatoriedad. Para poder proveer un servicio aleatorio que sea verificable se sugiere seguir las siguientes directrices:
 
-Una vez que se ha terminado con el proceso que requiere aleatoriedad, puede ser de interés para terceras personas el 
-verificar que dicho proceso aleatorio fue legítimo. Para ello hay varios enfoques, pero en esta sección se mencionará
-cómo se hizo en Random Comments (aunque puede servir como fórmula para cualquier proceso). 
+1. Guardar el estado inicial (*input*) sobre el cual se ejecutará la función aleatoria, por ejemplo, el conjunto de todos los elementos posibles (preservando el orden).
 
-La idea es que quien realiza el proceso aleatorio, antes de hacer uso de aleatoriedad, guarde el estado inicial de la
-información con la que trabajará (por ejemplo en Random Comments se guarda una lista de pares usuario, comentario que 
-sean válidos). 
+2. Guardar el pulso cuyo valor aleatorio será utilizado como semilla del PRNG.
 
-A continuación, por cada llamado al generador pseudo aleatorio se aumenta en uno a un contador de
-llamados. 
+3. Por cada llamada que se realice al PRNG, se aumenta un contador que se inicializa en cero al establecer la semilla.
 
-Finalmente se comparte la información inicial (identificador del pulso utilizado, datos iniciales y contador) para que
-un tercero pueda verificar la correctitud del proceso replicando el mismo, localmente.
+4. Al momento de publicar el resultado final, publicar además el (1) estado inicial, (2) el pulso alearorio, y (3) el valor del contador de llamados.
+
+Con toda la información publicada en el punto 4, cualquier persona puede verificar que el proceso fue llevado a cabo correctamente.
 
 <p align="center">
     <img alt="Verificación API Random Uchile" src="img/verification.png"/>
