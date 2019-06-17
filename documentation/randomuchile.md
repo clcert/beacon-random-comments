@@ -58,12 +58,12 @@ Una vez obtenido dicho valor aleatorio (`outputValue`), este puede ser utilizado
 
 ### Ejemplo: Valor aleatorio (`outputValue`) en PRNG
 
-Javascript
+##### 2.1 Javascript
 ```javascript
 // Pendiente
 ```
 
-Python
+##### 2.2 Python
 ```python
 import random
 
