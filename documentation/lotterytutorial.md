@@ -20,8 +20,6 @@ efectivamente se generó dicho valor utilizando la semilla proveída por
 el beacon, generando localmente los números y comparándolos con los
 valores generados por quien realizó el sorteo.
  
-INSERTAR UNA IMAGEN
- 
 Como se mencionó anteriormente, este tutorial consta de cuatro partes. 
 Entre ellas:
 
