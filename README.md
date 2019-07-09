@@ -47,6 +47,7 @@ la segunda se enfoca en explicar cómo se interactua con la API de Random UChile
 
 * [Random Comments](documentation/randomcomments.md)
 * [API Random UChile](documentation/randomuchile.md)
+* [Lottery Tutorial using Random UChile API](documentation/lotterytutorial.md)
  
 
  

@@ -112,3 +112,7 @@ Los pasos anteriormente descritos se pueden resumir en el siguiente diagrama:
 <p align="center">
     <img alt="Diagrama de Secuencia uso API Random Uchile" src="img/sequence-diagram-api.png"/>
 </p>
+
+En el siguiente [link](lotterytutorial.md) podrá encontrar un tutorial de cómo construir una
+mini aplicación (una lotería para ser más específico) paso a paso, 
+incluyendo los cuatro pasos mencionados anteriormente.
