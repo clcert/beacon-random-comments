@@ -2,8 +2,7 @@
 
 Este es un mini tutorial sobre como utilizar la API del Beacon de Random
 UChile. Se mostrará paso a paso como desarrollar una aplicación que 
-simule una lotería incluyendo los mismos puntos mencionados en EL 
-DOCUMENTO DE LA API (es decir: llamado, uso de valor aleatorio, generar 
+simule una lotería incluyendo los mismos puntos mencionados en [el documento de la API](randomuchile.md) (es decir: llamado, uso de valor aleatorio, generar 
 datos de verificación y la verificación en sí). A diferencia del 
 documento introductorio de la API, este tutorial provee código
 (testeado) en distintos lenguajes de programación junto con links para
