@@ -12,10 +12,11 @@ verificación, como la que se puede apreciar a continuación:
 En caso de tener dicho link, por favor dirigirse a la página de 
 verificación del sorteo y descargar el zip que contiene los archivos que
 utilizaremos. Una vez descargado el archivo, descomprímalo, debiera
-hallar dos archivos:
+hallar cuatro archivos:
 
 ```
 verification
+    ├ requirements.txt
     ├ verify.py
     ├ chacha20generator.py
     └ draw.json
