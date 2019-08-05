@@ -17,6 +17,7 @@ hallar dos archivos:
 ```
 verification
     ├ verify.py
+    ├ chacha20generator.py
     └ draw.json
 ```
 

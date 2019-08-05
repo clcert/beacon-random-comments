@@ -37,7 +37,7 @@ def verify(draw):
 
     round_winner = 0
     for i in range(draw["retries"]):
-        round_winner = chacha.rand_int(0, draw["comments_number"])
+        round_winner = chacha.rand_int(0, draw["comments_number"]-1)
 
     picked = draw["comments"][round_winner]
     official = draw["selected_comment"]
