@@ -1,7 +1,7 @@
 import argparse
-import random
 import requests
 import json
+from .chacha20generator import ChaChaRand
 
 
 def get_seed(pulse_url):
@@ -33,11 +33,11 @@ def verify(draw):
             }
     :return: True if the given dictionary represents a valid draw, else False.
     """
-    random.seed(get_seed(draw["pulse_url"]))
+    chacha = ChaChaRand(get_seed(draw["pulse_url"]))
 
     round_winner = 0
     for i in range(draw["retries"]):
-        round_winner = random.randint(0, draw.comments_number)  # TODO: Replace with Franco's script
+        round_winner = chacha.rand_int(0, draw["comments_number"])
 
     picked = draw["comments"][round_winner]
     official = draw["selected_comment"]
