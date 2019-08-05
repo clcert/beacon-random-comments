@@ -17,8 +17,8 @@
         currentUrl: null,
         loadingGifURL: null,
         popupRequests: 0,
-        seed: null
-
+        seed: null,
+        chacha: null
     };
 
     window.elements = elements;
@@ -71,7 +71,7 @@
      * @returns {number}
      */
     function randInt(min, max) {
-        return Math.floor(Math.random()*(max-min+1)+min);
+        return elements.chacha.randUInt(max-1);
     }
 
 
@@ -379,7 +379,7 @@
                     drawJSON.pulse_url = message.data.pulse.uri;
 
                     debugLog("seed is", elements.seed);
-                    Math.seedrandom(elements.seed);
+                    elements.chacha = new ChaChaRand(elements.seed);
 
                     removeListener();
                     handler.change(new CommentsLoader(handler));
@@ -438,6 +438,7 @@
                 } catch(err) {
                     console.log(err);
                     debugLog("loaded comments...");
+                    hideCommentsLoadingIcon();
                     clearInterval(intervalClickerId);
                     saveComments();
                 }
@@ -450,6 +451,7 @@
             debugLog("filtering and saving the comments");
             try {
                 elements.commentsList = getAllDOMComments();
+
                 drawJSON.comments = getAllComments();
                 drawJSON.host = getHostComment().host;
                 drawJSON.post_comment = getHostComment().post_comment;
@@ -503,9 +505,10 @@
                     showCommentsLoadingIcon();
 
                     elements.currentCommentID = randInt(0, elements.commentsList.length-1);
+                    debugLog("chacha returned", elements.currentCommentID);
                     elements.popupRequests++;
 
-                    debugLog("sending comment,,,");
+                    debugLog("sending comment...");
                     const comment = getComment(elements.currentCommentID);
                     chrome.runtime.sendMessage({
                         command: "chosen",

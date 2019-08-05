@@ -8,6 +8,8 @@ function reportError(err) {
 }
 
 
+
+
 function handleMessage(message) {
     switch (message.command) {
         case "send-winner":
@@ -46,6 +48,7 @@ function handleGetSeed() {
                     command: "seed-json",
                     data: JSON.parse(data)
                 });
+            console.log("data is", JSON.parse(data));
         });
     }
 

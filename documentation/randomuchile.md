@@ -105,6 +105,9 @@ Una parte fundamental del proceso es poder brindar un servicio de verificación 
 
 4. [Opcional] Servicio de verificación: además del código fuente, es deseable que la organización (o persona) que esté a cargo del proceso aleatorio brinde un servicio de verificación, montado en servidores propios, que tenga la posibilidad de aceptar los datos publicados y recrear el sorteo, permitiendo a las personas verificar que el resultado final es correcto y, fundamentalmente, aleatorio.
 
+En el siguiente [link](../verification/tutorial.md) se puede hallar un pequeño tutorial para la verificación 
+un sorteo de Random Comments
+
 ## Resumen General
 
 Los pasos anteriormente descritos se pueden resumir en el siguiente diagrama:

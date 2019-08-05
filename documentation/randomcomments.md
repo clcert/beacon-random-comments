@@ -55,3 +55,5 @@ motivos de seguridad explicados aquí), este se ejecuta solo cuando el usuario i
 
 Si te interesa crear una aplicación que usa la API de Random UChile en la que tus usuarios puedan utilizar aleatoriedad
 verificable, por favor visita el siguiente link. 
+
+

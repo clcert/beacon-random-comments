@@ -46,6 +46,7 @@ Esta sección está dividida en dos partes, la primera trata sobre la implementa
 la segunda se enfoca en explicar cómo se interactua con la API de Random UChile.
 
 * [Random Comments](documentation/randomcomments.md)
+* [Random Comments Verificación](verification/tutorial.md)
 * [API Random UChile](documentation/randomuchile.md)
 * [Lottery Tutorial using Random UChile API](documentation/lotterytutorial.md)
  

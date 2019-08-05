@@ -14,6 +14,10 @@ function debugLog() {
     }
 }
 
+function reportError(e) {
+    console.error(e);
+}
+
 
 function getCommentsCount() {
     return document.querySelectorAll("article > div > div > ul > ul").length;
@@ -25,9 +29,9 @@ function getCommentsCount() {
  */
 function getHostComment() {
     try {
-        const hostComment = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul:nth-child(1) > li")[0];
-        const host = hostComment.querySelector("div > div > div > h2 > a").textContent;
-        const post_comment = hostComment.querySelector("div > div > div:nth-child(2) > span").textContent;
+        const hostComment = document.querySelectorAll("article > div:nth-child(3) > div:nth-child(3) > ul > div > li > div > div > div")[1];
+        const host = hostComment.querySelector("h2").textContent;
+        const post_comment = hostComment.querySelector("span").textContent;
         return {host: host, post_comment: post_comment};
     } catch (e) {
         reportError(e);
@@ -71,6 +75,7 @@ function clickToLoadComments() {
 
 
 function getAllDOMComments() {
+
     if (document.allDOMComments) {
         return document.allDOMComments;
     } else {

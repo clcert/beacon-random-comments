@@ -1,11 +1,6 @@
 'use strict';
 
-/**
- *
- * @type {{startBtn: HTMLElement, clipboardBtn: HTMLElement, collapsibleHeaders: HTMLCollectionOf<Element>,
- * main: Element, welcomeDiv: HTMLElement, notReloadMsg: HTMLElement, gifUrl: *, finishBtn: HTMLElement,
- * shareBtn: HTMLElement, retryBtn: HTMLElement, finishUser: HTMLElement, shareUser: HTMLElement, attempts: HTMLElement}}
- */
+
 let elements = {
     debugging: true,
     verificationURL: null,
@@ -108,7 +103,6 @@ let StateHandler = function() {
                         loaded before it will not be loaded again (because window.hasRun guard at the beginning of the content script).
                     */
                     debugLog("executing script...");
-                    chrome.tabs.executeScript({file: "/content_scripts/seedrandom.min.js"});
                     chrome.tabs.executeScript({file: "/content_scripts/interface.js"});
 
 
@@ -528,7 +522,7 @@ let verificationURLWaiter = function(handler) {
 
     let listenVerificationURL = () => {
         debugLog("listening for verification url");
-        function handleVeriticationURLResponse(message) {
+        function handleVerificationURLResponse(message) {
             if (message.command === "verification") {
                 debugLog("verification url received: ", message.url);
                 elements.verificationURL = message.url;
@@ -548,10 +542,10 @@ let verificationURLWaiter = function(handler) {
         }
 
         function removeHandler() {
-            chrome.runtime.onMessage.removeListener(handleVeriticationURLResponse);
+            chrome.runtime.onMessage.removeListener(handleVerificationURLResponse);
         }
 
-        chrome.runtime.onMessage.addListener(handleVeriticationURLResponse);
+        chrome.runtime.onMessage.addListener(handleVerificationURLResponse);
     };
 };
 
